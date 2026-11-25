@@ -4351,7 +4351,10 @@ ${photo.reviewStatus === 'rejected' && photo.rejectionReason ? `<div class="evid
       const checklistItem = (plot.checklist || []).find(item => Array.isArray(item) && item[0] === photoCategory);
       if (checklistItem && !evidenceStillExists) {
         checklistItem[1] = 'missing';
-        updatePlotScore(plotId);
+        const checklist = Array.isArray(plot.checklist) ? plot.checklist : [];
+        const approved = checklist.filter(item => Array.isArray(item) && item[1] === 'done').length;
+        plot.score = checklist.length ? Math.round((approved / checklist.length) * 100) : 0;
+        plot.status = plot.score === 0 ? 'Not Started' : plot.score < 100 ? 'In Progress' : 'Complete';
       }
 
       if (!saveData()) {
