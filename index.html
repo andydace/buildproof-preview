@@ -3169,47 +3169,77 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     }
 
     function loadData() {
-      // Safe upgrade rule: never delete a user's saved projects, plots, reports or settings
-      // when installing a newer version. Only create the initial Doseley workspace when
-      // there is genuinely no saved workspace yet.
-      const storedVersion = localStorage.getItem('plotvaultVersion');
-      const savedProjects = localStorage.getItem('plotvaultProjects');
-      const savedPlots = localStorage.getItem('plotvaultPlots');
-      const savedReports = localStorage.getItem('plotvaultReports');
-      const savedSettings = localStorage.getItem('plotvaultSettings');
-      const hasSavedWorkspace = !!(savedProjects || savedPlots || savedReports || savedSettings);
-
+      // Read and validate everything before changing the live in-memory workspace.
+      // If storage is unavailable or one record is malformed, leave the original
+      // saved values untouched and avoid partially loading a mixed workspace.
       try {
-        if (savedProjects) projects = JSON.parse(savedProjects);
-        if (savedPlots) plots = JSON.parse(savedPlots);
-        if (savedReports) reportHistory = JSON.parse(savedReports);
-        if (savedSettings) appSettings = { ...appSettings, ...JSON.parse(savedSettings) };
-        if (!projects || typeof projects !== 'object') projects = {};
-        if (!plots || typeof plots !== 'object') plots = {};
-        if (!Array.isArray(reportHistory)) reportHistory = [];
+        const savedProjects = localStorage.getItem('plotvaultProjects');
+        const savedPlots = localStorage.getItem('plotvaultPlots');
+        const savedReports = localStorage.getItem('plotvaultReports');
+        const savedSettings = localStorage.getItem('plotvaultSettings');
+        const hasSavedWorkspace = !!(savedProjects || savedPlots || savedReports || savedSettings);
+
+        let nextProjects = savedProjects ? JSON.parse(savedProjects) : projects;
+        let nextPlots = savedPlots ? JSON.parse(savedPlots) : plots;
+        let nextReports = savedReports ? JSON.parse(savedReports) : reportHistory;
+        let nextSettings = savedSettings
+          ? { ...appSettings, ...JSON.parse(savedSettings) }
+          : appSettings;
 
         if (!hasSavedWorkspace) {
-          projects = { doseley: { id:'doseley', name:'Doseley Halt', location:'Telford, Shropshire', client:'', siteManager:'', status:'Active', plots:0, completion:0, compliance:0, updated:'Not yet updated', startDate:'', targetDate:'' } };
-          plots = {};
-          reportHistory = [];
-          appSettings = { assessor:'', role:'', email:'', company:'', address:'', phone:'', companyEmail:'', reportFooter:'', showCompany:true };
+          nextProjects = {
+            doseley: {
+              id: 'doseley', name: 'Doseley Halt', location: 'Telford, Shropshire',
+              client: '', siteManager: '', status: 'Active', plots: 0,
+              completion: 0, compliance: 0, updated: 'Not yet updated',
+              startDate: '', targetDate: ''
+            }
+          };
+          nextPlots = {};
+          nextReports = [];
+          nextSettings = {
+            assessor: '', role: '', email: '', company: '', address: '', phone: '',
+            companyEmail: '', reportFooter: '', showCompany: true
+          };
         }
 
-        if (!projects.doseley && Object.keys(projects).length === 0 && !hasSavedWorkspace) {
-          projects.doseley = { id:'doseley', name:'Doseley Halt', location:'Telford, Shropshire', client:'', siteManager:'', status:'Active', plots:0, completion:0, compliance:0, updated:'Not yet updated' };
+        if (!nextProjects || typeof nextProjects !== 'object' || Array.isArray(nextProjects)) {
+          throw new Error('Saved projects data is not a valid object');
         }
-        Object.entries(projects).forEach(([id, project]) => { if (project && !project.id) project.id = id; });
-        Object.entries(plots).forEach(([id, plot]) => {
-          if (!plot || typeof plot !== 'object') { delete plots[id]; return; }
+        if (!nextPlots || typeof nextPlots !== 'object' || Array.isArray(nextPlots)) {
+          throw new Error('Saved plots data is not a valid object');
+        }
+        if (!Array.isArray(nextReports)) {
+          throw new Error('Saved report history is not a valid list');
+        }
+        if (!nextSettings || typeof nextSettings !== 'object' || Array.isArray(nextSettings)) {
+          throw new Error('Saved settings data is not a valid object');
+        }
+
+        Object.entries(nextProjects).forEach(([id, project]) => {
+          if (!project || typeof project !== 'object' || Array.isArray(project)) {
+            throw new Error('Invalid project record: ' + id);
+          }
+          if (!project.id) project.id = id;
+        });
+        Object.entries(nextPlots).forEach(([id, plot]) => {
+          if (!plot || typeof plot !== 'object' || Array.isArray(plot)) {
+            throw new Error('Invalid plot record: ' + id);
+          }
           if (!plot.id) plot.id = id;
           if (!Array.isArray(plot.checklist)) plot.checklist = [];
           if (!Array.isArray(plot.gallery)) plot.gallery = [];
           if (!Array.isArray(plot.timeline)) plot.timeline = [];
         });
-        localStorage.setItem('plotvaultCleanStartApplied', 'yes');
+
+        // Commit the validated workspace to memory in one step.
+        projects = nextProjects;
+        plots = nextPlots;
+        reportHistory = nextReports;
+        appSettings = nextSettings;
       } catch (error) {
-        console.error('PlotVault data could not be read', error);
-        toast('Saved data could not be read. Existing storage has been left untouched.');
+        console.error('PlotVault data could not be loaded safely', error);
+        toast('Saved data could not be loaded safely. Existing saved data has not been overwritten.');
       }
     }
 
