@@ -3414,6 +3414,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       const startDate = prompt('Start date (optional)', project.startDate || '');
       const targetDate = prompt('Target completion date (optional)', project.targetDate || '');
 
+      const previousProject = { ...project };
       project.name = newName;
       project.location = newLocation;
       project.client = newClient;
@@ -3422,7 +3423,10 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       project.startDate = startDate || ''; project.targetDate = targetDate || '';
       project.updated = new Date().toLocaleDateString('en-GB');
 
-      saveData();
+      if (!saveData()) {
+        Object.assign(project, previousProject);
+        return;
+      }
 
       document.getElementById('pd-name').textContent =
         project.name;
@@ -4309,7 +4313,7 @@ return `
     }
 
     function approveChecklistItem(plotId, category) {
-      syncEvidenceStatus(plotId, category, 'approved');
+      if (!syncEvidenceStatus(plotId, category, 'approved')) return;
       if (state.screen === 'checklist') renderChecklist();
       if (state.screen === 'evidencegallery') renderGallery();
       if (state.screen === 'plotoverview') renderPlotOverview();
@@ -4318,7 +4322,7 @@ return `
 
     function approveEvidence(category) {
       const plotId = state.plotId;
-      syncEvidenceStatus(plotId, category, 'approved', '', state.selectedPhoto);
+      if (!syncEvidenceStatus(plotId, category, 'approved', '', state.selectedPhoto)) return;
       openPlot(plotId);
       toast('Evidence approved — Checklist updated automatically');
     }
@@ -4798,12 +4802,16 @@ return `
 
       if (!newStatus) return;
 
+      const previousPlot = { ...plot };
       plot.number = newNumber;
       plot.houseType = newHouseType;
       plot.stage = newStage;
       plot.status = newStatus;
 
-      saveData();
+      if (!saveData()) {
+        Object.assign(plot, previousPlot);
+        return;
+      }
 
       renderPlotList();
 
