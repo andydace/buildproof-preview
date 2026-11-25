@@ -3590,7 +3590,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
         state.history = state.history.filter(s => !['camera', 'category', 'notes'].includes(s));
         hideLoading();
         go('photoreview');
-        if (!gps.latitude || !gps.longitude) {
+        if (gps.latitude == null || gps.longitude == null) {
           toast('Evidence saved. GPS location was not available for this photo.');
         } else {
           toast('Evidence saved successfully.');
