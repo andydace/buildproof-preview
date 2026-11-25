@@ -4144,9 +4144,10 @@ return `
       }).join('') : '<div class="empty-state" style="grid-column:1/-1;"><div class="ic">📷</div>No evidence captured yet.</div>';
     }
     function showEvidence(plotId, photoIndex) {
-
       const p = plots[plotId];
+      if (!p || !Array.isArray(p.gallery)) { toast('This plot gallery is unavailable.'); return; }
       const photo = p.gallery[photoIndex];
+      if (!photo) { toast('This evidence photo could not be found.'); return; }
 
       if (!photo || typeof photo !== 'object') {
         toast('This evidence photo could not be found.');
@@ -4784,34 +4785,13 @@ return `
     }
 
     function updatePlotScore(plotId) {
-
       const plot = plots[plotId];
-
-      const approved =
-        plot.checklist.filter(i => i[1] === 'done').length;
-
-      plot.score =
-        Math.round(
-          (approved / plot.checklist.length) * 100
-        );
-
-      if (plot.score === 0) {
-
-        plot.status = "Not Started";
-
-      }
-      else if (plot.score < 100) {
-
-        plot.status = "In Progress";
-
-      }
-      else {
-
-        plot.status = "Complete";
-
-      }
-
-      saveData();
+      if (!plot) return false;
+      if (!Array.isArray(plot.checklist)) plot.checklist = [];
+      const approved = plot.checklist.filter(item => Array.isArray(item) && item[1] === 'done').length;
+      plot.score = plot.checklist.length ? Math.round((approved / plot.checklist.length) * 100) : 0;
+      plot.status = plot.score === 0 ? 'Not Started' : plot.score < 100 ? 'In Progress' : 'Complete';
+      return saveData();
     }
 
     /* ---------------- REPORTS, SETTINGS AND BACKUP ---------------- */
