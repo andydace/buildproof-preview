@@ -4305,8 +4305,14 @@ return `
       if (reason === null) return;
       const cleanReason = reason.trim() || 'Photo does not meet the evidence requirements';
       if (!Array.isArray(plot.timeline)) plot.timeline = [];
+      const previousTimeline = plot.timeline.slice();
       plot.timeline.unshift([new Date().toLocaleString(), `PHOTO REJECTED — ${category}. Retake required: ${cleanReason}`]);
-      if (!syncEvidenceStatus(plotId, category, 'rejected', cleanReason, state.selectedPhoto)) return;
+      if (!syncEvidenceStatus(plotId, category, 'rejected', cleanReason, state.selectedPhoto)) {
+        // syncEvidenceStatus rolls back to the timeline state it received;
+        // restore the state from before this rejection attempt as well.
+        plot.timeline = previousTimeline;
+        return;
+      }
       openPlot(plotId);
       toast('Photo rejected. A retake warning has been added to the plot checklist.');
     }
