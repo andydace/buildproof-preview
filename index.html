@@ -4266,19 +4266,46 @@ return `
 
     function syncEvidenceStatus(plotId, category, status, reason, selectedPhoto) {
       const plot = plots[plotId];
-      if (!plot) return;
+      if (!plot) { toast('The selected plot could not be found.'); return false; }
       if (!Array.isArray(plot.gallery)) plot.gallery = [];
-      const item = plot.checklist.find(c => c[0] === category);
-      if (item) item[1] = status === 'approved' ? 'done' : status === 'rejected' ? 'rejected' : 'pending';
-      const matchingPhotos = plot.gallery.filter(photo => photo.category === category);
+      if (!Array.isArray(plot.checklist)) plot.checklist = [];
+      if (!Array.isArray(plot.timeline)) plot.timeline = [];
+
+      const item = plot.checklist.find(entry => Array.isArray(entry) && entry[0] === category);
+      const matchingPhotos = plot.gallery.filter(photo => photo && photo.category === category);
       const targetPhoto = selectedPhoto && matchingPhotos.includes(selectedPhoto) ? selectedPhoto : matchingPhotos[0];
+      const previousItemStatus = item ? item[1] : null;
+      const previousPhotoStatus = targetPhoto ? targetPhoto.reviewStatus : null;
+      const previousRejectionReason = targetPhoto ? targetPhoto.rejectionReason : undefined;
+      const previousScore = plot.score;
+      const previousStatus = plot.status;
+      const previousTimeline = plot.timeline.slice();
+
+      if (item) item[1] = status === 'approved' ? 'done' : status === 'rejected' ? 'rejected' : 'pending';
       if (targetPhoto) {
         targetPhoto.reviewStatus = status;
         if (status === 'rejected') targetPhoto.rejectionReason = reason || 'Photo does not meet the evidence requirements';
-        else { delete targetPhoto.rejectionReason; }
+        else delete targetPhoto.rejectionReason;
       }
-      updatePlotScore(plotId);
-      saveData();
+
+      const approved = plot.checklist.filter(entry => Array.isArray(entry) && entry[1] === 'done').length;
+      plot.score = plot.checklist.length ? Math.round((approved / plot.checklist.length) * 100) : 0;
+      plot.status = plot.score === 0 ? 'Not Started' : plot.score < 100 ? 'In Progress' : 'Complete';
+
+      if (!saveData()) {
+        if (item) item[1] = previousItemStatus;
+        if (targetPhoto) {
+          if (previousPhotoStatus === undefined) delete targetPhoto.reviewStatus;
+          else targetPhoto.reviewStatus = previousPhotoStatus;
+          if (previousRejectionReason === undefined) delete targetPhoto.rejectionReason;
+          else targetPhoto.rejectionReason = previousRejectionReason;
+        }
+        plot.score = previousScore;
+        plot.status = previousStatus;
+        plot.timeline = previousTimeline;
+        return false;
+      }
+      return true;
     }
 
     function approveChecklistItem(plotId, category) {
@@ -4298,16 +4325,14 @@ return `
 
     function rejectEvidence(category) {
       const plotId = state.plotId;
+      const plot = plots[plotId];
+      if (!plot) { toast('The selected plot could not be found.'); return; }
       const reason = prompt('Why is this photo being rejected? Enter the reason so the site manager knows what to retake.');
       if (reason === null) return;
       const cleanReason = reason.trim() || 'Photo does not meet the evidence requirements';
-      syncEvidenceStatus(plotId, category, 'rejected', cleanReason, state.selectedPhoto);
-      const plot = plots[plotId];
-      if (plot) {
-        if (!Array.isArray(plot.timeline)) plot.timeline = [];
-        plot.timeline.unshift([new Date().toLocaleString(), `PHOTO REJECTED — ${category}. Retake required: ${cleanReason}`]);
-        saveData();
-      }
+      if (!Array.isArray(plot.timeline)) plot.timeline = [];
+      plot.timeline.unshift([new Date().toLocaleString(), `PHOTO REJECTED — ${category}. Retake required: ${cleanReason}`]);
+      if (!syncEvidenceStatus(plotId, category, 'rejected', cleanReason, state.selectedPhoto)) return;
       openPlot(plotId);
       toast('Photo rejected. A retake warning has been added to the plot checklist.');
     }
