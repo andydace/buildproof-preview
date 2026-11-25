@@ -2253,18 +2253,36 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
 
 
-<style id="plotvault-v1152-preview-fixes">
-/* v11.52 preview fixes: tighter Plot Overview tile spacing and reliable image paths. */
+<style id="plotvault-v1153-preview-fixes">
+/* v11.53 preview fix: use an actual six-row grid so tiles fill the available
+   Plot Overview height with a consistent, compact gap. */
 @media (max-width:700px) {
   #screens > #screen-plotoverview > #po-body > .po23-wrap {
-    gap:2px !important;
-    grid-template-rows:minmax(0,1.28fr) minmax(0,.66fr) minmax(0,1.18fr) repeat(3,minmax(0,.82fr)) !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    grid-template-rows:minmax(96px,1.28fr) minmax(48px,.66fr) minmax(90px,1.18fr) repeat(3,minmax(48px,.82fr)) !important;
+    align-content:stretch !important;
+    align-items:stretch !important;
+    justify-content:stretch !important;
+    justify-items:stretch !important;
+    gap:5px !important;
+    width:100% !important;
+    height:100% !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    box-sizing:border-box !important;
   }
   #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-hero,
   #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-camera,
   #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-compliance,
   #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-link-card {
     min-height:0 !important;
+    max-height:none !important;
+    height:100% !important;
+    width:100% !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
   }
 }
 </style>
