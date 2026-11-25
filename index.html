@@ -3392,36 +3392,49 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     }
 
     function editProject() {
-
       const project = projects[state.projectId];
       if (!project) { toast('Select a project before editing'); return; }
 
-      const newName =
-        prompt("Project Name", project.name);
+      const newName = prompt('Project Name', String(project.name || ''));
+      if (newName === null) return;
+      const cleanName = newName.trim();
+      if (!cleanName) { toast('Project name cannot be blank'); return; }
+      const newLocation = prompt('Location', String(project.location || ''));
+      if (newLocation === null) return;
+      const cleanLocation = newLocation.trim();
+      if (!cleanLocation) { toast('Project location cannot be blank'); return; }
 
-      if (!newName) return;
+      const duplicate = Object.values(projects).some(other =>
+        other && other.id !== project.id &&
+        String(other.name || '').trim().toLowerCase() === cleanName.toLowerCase() &&
+        String(other.location || '').trim().toLowerCase() === cleanLocation.toLowerCase()
+      );
+      if (duplicate) { toast('A project with that name and location already exists'); return; }
 
-      const newLocation =
-        prompt("Location", project.location);
-
-      if (!newLocation) return;
-      const newClient =
-        prompt("Client", project.client || "");
-
+      const newClient = prompt('Client', project.client || '');
+      if (newClient === null) return;
       const newSiteManager = prompt('Site Manager', project.siteManager || '');
+      if (newSiteManager === null) return;
       const sapAssessor = prompt('SAP Assessor name', project.sapAssessor || '');
+      if (sapAssessor === null) return;
       const sapAssessorEmail = prompt('SAP Assessor email address', project.sapAssessorEmail || '');
-      if (sapAssessorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sapAssessorEmail)) { toast('Please enter a valid SAP Assessor email address'); return; }
+      if (sapAssessorEmail === null) return;
+      const cleanEmail = sapAssessorEmail.trim();
+      if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { toast('Please enter a valid SAP Assessor email address'); return; }
       const startDate = prompt('Start date (optional)', project.startDate || '');
+      if (startDate === null) return;
       const targetDate = prompt('Target completion date (optional)', project.targetDate || '');
+      if (targetDate === null) return;
 
       const previousProject = { ...project };
-      project.name = newName;
-      project.location = newLocation;
-      project.client = newClient;
-      project.siteManager = newSiteManager;
-      project.sapAssessor = sapAssessor || ''; project.sapAssessorEmail = sapAssessorEmail || '';
-      project.startDate = startDate || ''; project.targetDate = targetDate || '';
+      project.name = cleanName;
+      project.location = cleanLocation;
+      project.client = newClient.trim();
+      project.siteManager = newSiteManager.trim();
+      project.sapAssessor = sapAssessor.trim();
+      project.sapAssessorEmail = cleanEmail;
+      project.startDate = startDate.trim();
+      project.targetDate = targetDate.trim();
       project.updated = new Date().toLocaleDateString('en-GB');
 
       if (!saveData()) {
@@ -3429,25 +3442,19 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
         return;
       }
 
-      document.getElementById('pd-name').textContent =
-        project.name;
-
-      document.getElementById('pd-location').textContent =
-        project.location;
-      const headingLocation = document.getElementById('pd-location-heading');
-      if (headingLocation) headingLocation.textContent = project.location;
-      document.getElementById('pd-client').textContent =
-        project.client || "Not set";
-
-      document.getElementById('pd-sitemanager').textContent =
-        project.siteManager || "Not set";
-      const sapNameEl = document.getElementById('pd-sap-assessor'); if (sapNameEl) sapNameEl.textContent = project.sapAssessor || 'Not set';
-      const sapEmailEl = document.getElementById('pd-sap-email'); if (sapEmailEl) sapEmailEl.textContent = project.sapAssessorEmail || 'Not set';
-
-
-      const sd=document.getElementById('pd-start-date'); if(sd) sd.textContent=project.startDate || 'Not set';
-      const td=document.getElementById('pd-target-date'); if(td) td.textContent=project.targetDate || 'Not set';
-      renderProjects(); toast('Project updated');
+      const put = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+      put('pd-name', project.name);
+      put('pd-location', project.location);
+      put('pd-location-heading', project.location);
+      put('pd-client', project.client || 'Not set');
+      put('pd-sitemanager', project.siteManager || 'Not set');
+      put('pd-sap-assessor', project.sapAssessor || 'Not set');
+      put('pd-sap-email', project.sapAssessorEmail || 'Not set');
+      put('pd-start-date', project.startDate || 'Not set');
+      put('pd-target-date', project.targetDate || 'Not set');
+      renderProjects();
+      renderDashboardProjects();
+      toast('Project updated');
     }
 
     function openPlot(id) { const plot = plots[id]; if (!plot) { toast('This plot is no longer available'); return; } state.plotId = id; state.projectId = plot.projectId; go('plotoverview'); }
