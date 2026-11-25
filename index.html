@@ -3990,9 +3990,9 @@ return `
           <section class="po23-hero" aria-label="Plot summary">
             <div class="po23-hero-copy">
               <div class="po23-eyebrow">PLOT</div>
-              <div class="po23-number">${plotNumber}</div>
-              <div class="po23-house-type">${p.houseType || 'New Plot'}</div>
-              <span class="po23-status ${meta.badge}"><span class="po23-status-dot"></span>${p.status || 'In Progress'}</span>
+              <div class="po23-number">${escapeHTML(plotNumber)}</div>
+              <div class="po23-house-type">${escapeHTML(p.houseType || 'New Plot')}</div>
+              <span class="po23-status ${meta.badge}"><span class="po23-status-dot"></span>${escapeHTML(p.status || 'In Progress')}</span>
             </div>
             <img class="po23-house" src="https://raw.githubusercontent.com/andydace/buildproof/main/house-ghost.png" alt="" onerror="this.style.display='none'">
             <div class="po23-tagline">Build Better<br>Compliance</div>
@@ -4002,7 +4002,7 @@ return `
             </div>
           </section>
 
-          <button class="po23-camera" onclick="openCameraFor('${p.projectId}','${p.id}')">
+          <button class="po23-camera" onclick="openCameraFor(decodeURIComponent('${pvEventArg(p.projectId)}'),decodeURIComponent('${pvEventArg(p.id)}'))">
             <span class="po23-camera-icon">📷</span>
             <span class="po23-camera-copy"><strong>TAKE PHOTO</strong><small>Capture compliance evidence</small></span>
             <span class="po23-arrow">›</span>
@@ -4017,7 +4017,7 @@ return `
             </div>
           </section>
 
-          <button class="po23-link-card ${rejected ? 'po23-retake-alert' : ''}" onclick="openChecklist('${p.id}')">
+          <button class="po23-link-card ${rejected ? 'po23-retake-alert' : ''}" onclick="openChecklist(decodeURIComponent('${pvEventArg(p.id)}'))">
             <span class="po23-link-icon po23-check-icon">▤</span>
             <span class="po23-link-copy"><strong>Checklist (${total})</strong><small>${rejected ? `⚠ ${rejected} photo${rejected === 1 ? '' : 's'} require retaking` : 'View and complete compliance items'}</small></span>
             <span class="po23-link-arrow">›</span>
@@ -4813,7 +4813,7 @@ return `
         const approved = items.filter(i => i[1] === 'done').length;
         const ready = items.length > 0 && approved === items.length;
         const project = projects[p.projectId] || {name:'Unknown project'};
-        return `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(p.number)}</strong><span class="badge ${ready?'badge-green':'badge-amber'}">${ready?'Ready':'Draft available'}</span></div><div style="font-size:12.5px;color:var(--muted);margin:6px 0 12px">${escapeHTML(project.name)} · ${approved}/${items.length} items approved</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="generatePlotReport('${p.id}')">Generate / Print report</button><button class="btn btn-secondary btn-sm" onclick="openChecklist('${p.id}')">Review checklist</button></div></div>`;
+        return `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(p.number)}</strong><span class="badge ${ready?'badge-green':'badge-amber'}">${ready?'Ready':'Draft available'}</span></div><div style="font-size:12.5px;color:var(--muted);margin:6px 0 12px">${escapeHTML(project.name)} · ${approved}/${items.length} items approved</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="generatePlotReport('${p.id}')">Generate / Print report</button><button class="btn btn-secondary btn-sm" onclick="openChecklist(decodeURIComponent('${pvEventArg(p.id)}'))">Review checklist</button></div></div>`;
       }).join('') : '<div class="empty-state"><div class="ic">📄</div>No plots available. Add a plot and complete its Part L checklist to generate a report.</div>';
       history.innerHTML = reportHistory.length ? [...reportHistory].reverse().map(r => `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(r.plotNumber)} · Part L</strong><span class="badge ${r.status==='Draft'?'badge-amber':'badge-blue'}">${r.status || 'Generated'}</span></div><div style="font-size:12px;color:var(--muted);margin:6px 0 12px">${escapeHTML(r.projectName)} · ${escapeHTML(r.generatedAt)}</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openSavedReport('${r.id}')">Open / Print</button><button class="btn btn-secondary btn-sm" onclick="downloadReportHTML('${r.id}')" >Download HTML</button><button class="btn btn-primary btn-sm" onclick="shareSavedReport('${r.id}')">Share report file</button></div></div>`).join('') : '<div class="empty-state"><div class="ic">🗂️</div>No reports have been generated yet.</div>';
     }
