@@ -3978,7 +3978,7 @@ return `
       const project = projects[p.projectId] || { name: 'Development' };
       const meta = statusMeta(p.status);
       const plotNumber = String(p.number || 'Plot').replace(/^Plot\s*/i, '');
-      const latestActivity = p.timeline.length ? p.timeline[0][1] : 'No activity yet';
+      const latestActivity = p.timeline.length ? String(p.timeline[0] && p.timeline[0][1] || 'Activity') : 'No activity yet';
 
       const numberHeading = document.getElementById('po-number');
       const projectHeading = document.getElementById('po-project');
@@ -4032,10 +4032,10 @@ return `
 
           <button class="po23-link-card po23-timeline-card" onclick="toggleTimeline()">
             <span class="po23-link-icon po23-time-icon">◷</span>
-            <span class="po23-link-copy"><strong>Recent Timeline</strong><small>${latestActivity}</small></span>
+            <span class="po23-link-copy"><strong>Recent Timeline</strong><small>${escapeHTML(latestActivity)}</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
-          ${state.timelineExpanded ? `<div class="po23-timeline-detail">${p.timeline.length ? p.timeline.map(item => `<div class="po23-timeline-entry"><span>•</span><div><strong>${item[1] || 'Activity'}</strong><small>${item[0] || ''}</small></div></div>`).join('') : '<div class="po23-empty">No activity has been recorded for this plot yet.</div>'}</div>` : ''}
+          ${state.timelineExpanded ? `<div class="po23-timeline-detail">${p.timeline.length ? p.timeline.map(item => `<div class="po23-timeline-entry"><span>•</span><div><strong>${escapeHTML(item && item[1] || 'Activity')}</strong><small>${escapeHTML(item && item[0] || '')}</small></div></div>`).join('') : '<div class="po23-empty">No activity has been recorded for this plot yet.</div>'}</div>` : ''}
         </div>
       `;
     }
@@ -4363,13 +4363,17 @@ return `
     function levelDot(level) { return { red: 'dot-red', amber: 'dot-amber', green: 'dot-green', blue: 'dot-green' }[level] || 'dot-amber'; }
     function renderNotifications() {
       const body = document.getElementById('notifications-body');
-      if (!notifications.length) { body.innerHTML = `<div class="empty-state"><div class="ic">🔔</div>No notifications right now.</div>`; return; }
-      body.innerHTML = `<div class="card" style="padding:4px 16px;">` + notifications.map(n => `
-    <div class="priority-item" style="opacity:${n.read ? 0.55 : 1};" onclick="openNotification('${n.id}')">
-      <span class="dot ${levelDot(n.level)}" style="margin-top:5px;"></span>
-      <div class="pi-text"><div class="t">${n.title}${n.read ? '' : ' · <span class="badge badge-blue" style="padding:2px 6px;">New</span>'}</div><div class="d">${n.body}</div><div class="d" style="color:var(--muted);margin-top:2px;">${n.time}</div></div>
+      if (!body) return;
+      if (!notifications.length) { body.innerHTML = `<div class="empty-state"><div class="ic">🔔</div>No notifications right now.</div>`; updateNotifBadges(); return; }
+      body.innerHTML = `<div class="card" style="padding:4px 16px;">` + notifications.map(n => {
+        const level = ['red','amber','green','blue'].includes(n.level) ? n.level : 'amber';
+        return `
+    <div class="priority-item" style="opacity:${n.read ? 0.55 : 1};" onclick="openNotification(decodeURIComponent('${pvEventArg(n.id)}'))">
+      <span class="dot ${levelDot(level)}" style="margin-top:5px;"></span>
+      <div class="pi-text"><div class="t">${escapeHTML(n.title || 'Notification')}${n.read ? '' : ' · <span class="badge badge-blue" style="padding:2px 6px;">New</span>'}</div><div class="d">${escapeHTML(n.body || '')}</div><div class="d" style="color:var(--muted);margin-top:2px;">${escapeHTML(n.time || '')}</div></div>
       <span class="chev">›</span>
-    </div>`).join('') + `</div>`;
+    </div>`;
+      }).join('') + `</div>`;
       updateNotifBadges();
     }
     function openNotification(id) {
@@ -4866,6 +4870,36 @@ return `
 
 </body></html>`;
     }
+    function pvSanitizeReportHtml(html) {
+      if (typeof html !== 'string' || !html.trim()) throw new Error('Saved report is empty or invalid');
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      doc.querySelectorAll('script, iframe, object, embed, form, base, meta[http-equiv]').forEach(node => node.remove());
+      doc.querySelectorAll('*').forEach(node => {
+        [...node.attributes].forEach(attr => {
+          const name = attr.name.toLowerCase();
+          const value = String(attr.value || '').trim();
+          if (name.startsWith('on') || name === 'srcdoc' ||
+              ((name === 'href' || name === 'src' || name === 'xlink:href' || name === 'action' || name === 'formaction') &&
+               /^\\s*(javascript|vbscript):/i.test(value))) {
+            node.removeAttribute(attr.name);
+          }
+        });
+      });
+      return '<!doctype html>\\n' + doc.documentElement.outerHTML;
+    }
+
+    function pvOpenReportWindow(html, autoPrint = true) {
+      const safeHtml = pvSanitizeReportHtml(html);
+      const win = window.open('', '_blank');
+      if (!win) return false;
+      win.document.open();
+      win.document.write(safeHtml);
+      win.document.close();
+      if (autoPrint) win.addEventListener('load', () => setTimeout(() => win.print(), 350), { once: true });
+      return true;
+    }
+
     function generatePlotReport(plotId) {
       const plot = plots[plotId]; if (!plot) return;
       const items = plot.checklist || [];
@@ -4903,7 +4937,7 @@ return `
       }
     }
     function emailSavedReport(id) { shareSavedReport(id); }
-    function openSavedReport(id) { const r=reportHistory.find(x=>x.id===id); if(!r)return; const win=window.open('','_blank'); if(!win){toast('Allow pop-ups to open the report');return;} win.document.open();win.document.write(r.html);win.document.close(); }
+    function openSavedReport(id) { const r=reportHistory.find(x=>x.id===id); if(!r)return; try { if(!pvOpenReportWindow(r.html,true)) toast('Allow pop-ups to open the report'); } catch(error) { console.error('Saved report could not be opened safely',error); toast('This saved report is invalid or unsafe to open'); } }
     function downloadReportHTML(id) { const r=reportHistory.find(x=>x.id===id); if(!r)return; const blob=new Blob([r.html],{type:'text/html'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=`PlotVault-${String(r.plotNumber).replace(/\W+/g,'-')}-Part-L-Report.html`;a.click();URL.revokeObjectURL(url); }
     function renderSettings() {
       const fields = {'setting-assessor':'assessor','setting-role':'role','setting-email':'email','setting-company':'company','setting-address':'address','setting-phone':'phone','setting-company-email':'companyEmail','setting-report-footer':'reportFooter'};
