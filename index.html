@@ -4940,19 +4940,43 @@ return `
       reader.onload = () => {
         try {
           const data = JSON.parse(reader.result);
-          if (!data.projects || typeof data.projects !== 'object' || Array.isArray(data.projects) ||
+          if (!data || typeof data !== 'object' || Array.isArray(data) ||
+              !data.projects || typeof data.projects !== 'object' || Array.isArray(data.projects) ||
               !data.plots || typeof data.plots !== 'object' || Array.isArray(data.plots) ||
               (data.reportHistory !== undefined && !Array.isArray(data.reportHistory)) ||
               (data.appSettings !== undefined && (!data.appSettings || typeof data.appSettings !== 'object' || Array.isArray(data.appSettings)))) {
             throw new Error('Invalid backup structure');
           }
 
+          // Validate and normalise imported records before replacing the current workspace.
+          const importedProjects = data.projects;
+          const importedPlots = data.plots;
+          const importedReports = Array.isArray(data.reportHistory) ? data.reportHistory : [];
+          Object.entries(importedProjects).forEach(([id, project]) => {
+            if (!project || typeof project !== 'object' || Array.isArray(project)) throw new Error('Invalid project record');
+            if (project.id && String(project.id) !== String(id)) throw new Error('Project ID does not match its backup key');
+            project.id = id;
+          });
+          Object.entries(importedPlots).forEach(([id, plot]) => {
+            if (!plot || typeof plot !== 'object' || Array.isArray(plot)) throw new Error('Invalid plot record');
+            if (plot.id && String(plot.id) !== String(id)) throw new Error('Plot ID does not match its backup key');
+            plot.id = id;
+            if (!Array.isArray(plot.checklist)) plot.checklist = [];
+            if (!Array.isArray(plot.gallery)) plot.gallery = [];
+            if (!Array.isArray(plot.timeline)) plot.timeline = [];
+          });
+          importedReports.forEach((report, index) => {
+            if (!report || typeof report !== 'object' || Array.isArray(report)) throw new Error('Invalid report record');
+            if (typeof report.html !== 'string') throw new Error('A saved report is missing its report document');
+            if (!report.id) report.id = 'imported_report_' + index + '_' + Date.now();
+          });
+
           const previous = {
             projects, plots, reportHistory, appSettings
           };
-          projects = data.projects;
-          plots = data.plots;
-          reportHistory = Array.isArray(data.reportHistory) ? data.reportHistory : [];
+          projects = importedProjects;
+          plots = importedPlots;
+          reportHistory = importedReports;
           appSettings = { ...appSettings, ...(data.appSettings || {}) };
 
           if (!saveData()) {
