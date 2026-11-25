@@ -4053,23 +4053,28 @@ return `
     function pvEscapeHtml(value) { return String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch])); }
 
     function checklistRow(name, st, plotId) {
+      const safeName = String(name || 'Unlabelled item');
       const status = ['done','pending','missing','notstarted','rejected'].includes(st) ? st : 'notstarted';
-      const parts = name.split(' - ');
+      const parts = safeName.split(' - ');
       const ref = parts.shift() || '';
       const description = parts.join(' - ');
-      const projectId = plots[plotId] ? plots[plotId].projectId : '';
-      const relatedPhoto = plots[plotId] && Array.isArray(plots[plotId].gallery) ? plots[plotId].gallery.find(photo => photo.category === name) : null;
+      const plot = plots[plotId];
+      const projectId = plot ? plot.projectId : '';
+      const relatedPhoto = plot && Array.isArray(plot.gallery) ? plot.gallery.find(photo => photo && photo.category === safeName) : null;
+      const safePlotArg = pvEventArg(plotId);
+      const safeProjectArg = pvEventArg(projectId);
+      const safeCategoryArg = pvEventArg(safeName);
       let action = '';
       if (status === 'done') action = `<span class="cl-action cl-action-approved">Approved</span>`;
-      else if (status === 'pending') action = `<button class="cl-action cl-action-approve" type="button" onclick="event.stopPropagation();approveChecklistItem('${plotId}','${name.replace(/'/g, "\\'")}')">Approve</button>`;
-      else if (status === 'rejected') action = `<button class="cl-action cl-action-photo" type="button" onclick="event.stopPropagation();openCameraFor('${projectId}','${plotId}','${name.replace(/'/g, "\\'")}')">Retake Photo</button>`;
-      else if (status === 'missing') action = `<button class="cl-action cl-action-photo" type="button" onclick="event.stopPropagation();openCameraFor('${projectId}','${plotId}','${name.replace(/'/g, "\\'")}')">Take Photo</button>`;
+      else if (status === 'pending') action = `<button class="cl-action cl-action-approve" type="button" onclick="event.stopPropagation();approveChecklistItem(decodeURIComponent('${safePlotArg}'),decodeURIComponent('${safeCategoryArg}'))">Approve</button>`;
+      else if (status === 'rejected') action = `<button class="cl-action cl-action-photo" type="button" onclick="event.stopPropagation();openCameraFor(decodeURIComponent('${safeProjectArg}'),decodeURIComponent('${safePlotArg}'),decodeURIComponent('${safeCategoryArg}'))">Retake Photo</button>`;
+      else if (status === 'missing') action = `<button class="cl-action cl-action-photo" type="button" onclick="event.stopPropagation();openCameraFor(decodeURIComponent('${safeProjectArg}'),decodeURIComponent('${safePlotArg}'),decodeURIComponent('${safeCategoryArg}'))">Take Photo</button>`;
       else action = `<span class="cl-action cl-action-notstarted">Not Started</span>`;
       const icons = {done:'✓', pending:'⌛', missing:'✕', notstarted:'○', rejected:'!' };
       const reason = status === 'rejected' && relatedPhoto && relatedPhoto.rejectionReason ? `<div class="cl-rejection-reason">Retake required: ${pvEscapeHtml(relatedPhoto.rejectionReason)}</div>` : '';
       return `<div class="cl-item-card cl-item-${status}">
         <div class="cl-item-icon">${icons[status]}</div>
-        <div class="cl-item-copy"><div class="cl-item-ref">${ref}</div><div class="cl-item-description">${description}</div>${reason}</div>
+        <div class="cl-item-copy"><div class="cl-item-ref">${escapeHTML(ref)}</div><div class="cl-item-description">${escapeHTML(description)}</div>${reason}</div>
         <div class="cl-item-action">${action}</div>
       </div>`;
     }
