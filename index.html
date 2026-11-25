@@ -5216,19 +5216,70 @@ html, body { width:100%; max-width:100%; min-height:100%; overflow-x:hidden; }
       put('setting-project-count',Object.keys(projects).length);put('setting-plot-count',Object.keys(plots).length);put('setting-report-count',reportHistory.length);
     }
     function saveSettings() {
+      const previousSettings = { ...appSettings };
       const fields = {'setting-assessor':'assessor','setting-role':'role','setting-email':'email','setting-company':'company','setting-address':'address','setting-phone':'phone','setting-company-email':'companyEmail','setting-report-footer':'reportFooter'};
       Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)appSettings[key]=el.value.trim();});
-      const check=document.getElementById('setting-show-company');appSettings.showCompany=!!(check&&check.checked);saveData();toast('Settings saved');renderSettings();
+      const check=document.getElementById('setting-show-company');
+      appSettings.showCompany=!!(check&&check.checked);
+      if (!saveData()) {
+        appSettings = previousSettings;
+        renderSettings();
+        return;
+      }
+      toast('Settings saved');
+      renderSettings();
     }
     function exportBackup() {
       const payload={version:PLOTVAULT_VERSION,exportedAt:new Date().toISOString(),projects,plots,reportHistory,appSettings};
       const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='PlotVault-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('Backup downloaded');
     }
     function importBackup() {
-      const input=document.getElementById('backup-file');const file=input&&input.files&&input.files[0];if(!file){toast('Choose a backup file first');return;}
-      if(!confirm('Restore this backup? It will replace the current projects, plots, settings and report history.'))return;
-      const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(!d.projects||!d.plots)throw new Error('Invalid backup');projects=d.projects;plots=d.plots;reportHistory=Array.isArray(d.reportHistory)?d.reportHistory:[];appSettings={...appSettings,...(d.appSettings||{})};saveData();renderProjects();renderReports();renderSettings();go('projects');toast('Backup restored');}catch(e){toast('Backup file is invalid or damaged');}};reader.readAsText(file);
+      const input = document.getElementById('backup-file');
+      const file = input && input.files && input.files[0];
+      if (!file) { toast('Choose a backup file first'); return; }
+      if (!confirm('Restore this backup? It will replace the current projects, plots, settings and report history.')) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!data.projects || typeof data.projects !== 'object' || Array.isArray(data.projects) ||
+              !data.plots || typeof data.plots !== 'object' || Array.isArray(data.plots) ||
+              (data.reportHistory !== undefined && !Array.isArray(data.reportHistory)) ||
+              (data.appSettings !== undefined && (!data.appSettings || typeof data.appSettings !== 'object' || Array.isArray(data.appSettings)))) {
+            throw new Error('Invalid backup structure');
+          }
+
+          const previous = {
+            projects, plots, reportHistory, appSettings
+          };
+          projects = data.projects;
+          plots = data.plots;
+          reportHistory = Array.isArray(data.reportHistory) ? data.reportHistory : [];
+          appSettings = { ...appSettings, ...(data.appSettings || {}) };
+
+          if (!saveData()) {
+            projects = previous.projects;
+            plots = previous.plots;
+            reportHistory = previous.reportHistory;
+            appSettings = previous.appSettings;
+            return;
+          }
+
+          renderProjects();
+          renderReports();
+          renderSettings();
+          go('projects');
+          toast('Backup restored successfully');
+        } catch (error) {
+          console.error('PlotVault backup restore failed', error);
+          toast('Backup file is invalid or damaged. Your current workspace has not been replaced.');
+        }
+      };
+      reader.onerror = () => toast('The backup file could not be read.');
+      reader.readAsText(file);
     }
+
     function renderDashboardProjects() {
       const el=document.getElementById('dashboard-project-list');if(!el)return;
       el.innerHTML=Object.values(projects).map(p=>`<div class="card tap" onclick="openProject('${p.id}')"><strong>${escapeHTML(p.name)}</strong><div style="font-size:12px;color:var(--muted)">${escapeHTML(p.location||'Location not set')} · ${Object.values(plots).filter(x=>x.projectId===p.id).length} plots</div></div>`).join('') || '<div class="empty-state">No projects yet.</div>';
