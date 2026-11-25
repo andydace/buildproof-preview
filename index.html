@@ -4172,110 +4172,41 @@ return `
 
     }
     function openEvidenceViewer(photo) {
+      if (!photo || typeof photo !== 'object') { toast('This evidence photo is unavailable.'); return; }
       state.selectedPhoto = photo;
 
-      document.getElementById(
-        'evidence-viewer-body'
-      ).innerHTML = `
+      const body = document.getElementById('evidence-viewer-body');
+      if (!body) { toast('The evidence viewer is unavailable.'); return; }
 
-    <div class="card">
+      const safeImage = typeof photo.image === 'string' && /^data:image\/(jpeg|png|webp);base64,/i.test(photo.image)
+        ? photo.image : '';
+      const category = photo.category || 'Uncategorised';
+      const encodedCategory = encodeURIComponent(String(category)).replace(/'/g, '%27');
+      const hasGps = Number.isFinite(Number(photo.latitude)) && Number.isFinite(Number(photo.longitude)) &&
+        photo.latitude !== null && photo.longitude !== null && photo.latitude !== '' && photo.longitude !== '';
+      const gpsLink = hasGps
+        ? `<button class="btn btn-secondary" onclick="window.open('https://www.google.com/maps/search/?api=1&amp;query=${Number(photo.latitude)},${Number(photo.longitude)}','_blank','noopener')">Open Location</button>`
+        : '<div>📍 GPS location was not recorded for this photo.</div>';
 
-   <img
-  src="${photo.image}"
-  style="
-    width:100%;
-    max-height:220px;
-    object-fit:cover;
-    border-radius:12px;
-    margin-bottom:16px;
-  "
->
-   
-
-  
-
-</div>
-
-     <h2 style="
-  margin-bottom:8px;
-  color:var(--navy);
-">
-  ${photo.category}
-</h2>
-
-<div style="
-  color:var(--muted);
-  font-size:14px;
-  margin-bottom:18px;
-">
-  ${photo.project} • ${photo.plot}
-</div>
-
-<div style="
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-">
-
-  <div>
-    📅 ${photo.timestamp}
-  </div>
-
-  <div>
-    👤 ${photo.capturedBy || appSettings.assessor || "Not recorded"}
-  </div>
-
-  <div>
-    📍 GPS Verified
-  </div>
-
-  <div>
-    Accuracy ±${photo.accuracy}m
-  </div>
-
-  <div>
-  Latitude: ${photo.latitude}
-</div>
-
-<div>
-  Longitude: ${photo.longitude}
-</div>
-
-<button
-  class="btn btn-primary"
-  onclick="window.location.href='https://www.google.com/maps/search/?api=1&query=${photo.latitude},${photo.longitude}'">
-
-  Open Location
-
-</button>
-
-<div class="evidence-review-state">Review status: <strong>${photo.reviewStatus === 'approved' ? 'Approved' : photo.reviewStatus === 'rejected' ? 'Rejected — retake required' : 'Pending review'}</strong></div>
-${photo.reviewStatus === 'rejected' && photo.rejectionReason ? `<div class="evidence-rejection-note">Retake reason: ${pvEscapeHtml(photo.rejectionReason)}</div>` : ''}
-<button
-  class="btn btn-primary"
-  style="margin-top:10px;"
-  onclick="approveEvidence('${photo.category}')">
-  Approve Evidence
-</button>
-<button
-  class="btn btn-secondary"
-  style="margin-top:10px;border-color:#C62828;color:#C62828;"
-  onclick="rejectEvidence('${photo.category}')">
-  Reject Photo — Request Retake
-</button>
-<button
-  class="btn btn-secondary"
-  style="margin-top:10px;"
-  onclick="deleteEvidence('${photo.category}')">
-
-  Delete Evidence
-
-</button>
-
-
-    </div>
-  `;
-
+      body.innerHTML = `
+        <div class="card">
+          ${safeImage ? `<img src="${safeImage}" alt="Evidence photo" style="width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-bottom:16px;">` : '<div class="empty-state">The stored image is unavailable or invalid.</div>'}
+        </div>
+        <h2 style="margin-bottom:8px;color:var(--navy);">${pvEscapeHtml(category)}</h2>
+        <div style="color:var(--muted);font-size:14px;margin-bottom:18px;">
+          ${pvEscapeHtml(photo.project || 'Project not recorded')} • ${pvEscapeHtml(photo.plot || 'Plot not recorded')}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>📅 ${pvEscapeHtml(photo.timestamp || photo.date || 'Date not recorded')}</div>
+          <div>👤 ${pvEscapeHtml(photo.capturedBy || appSettings.assessor || 'Not recorded')}</div>
+          ${gpsLink}
+          ${hasGps ? `<div>Accuracy ±${pvEscapeHtml(photo.accuracy ?? 'Not recorded')}m</div><div>Latitude: ${Number(photo.latitude).toFixed(6)}</div><div>Longitude: ${Number(photo.longitude).toFixed(6)}</div>` : ''}
+          <div class="evidence-review-state">Review status: <strong>${photo.reviewStatus === 'approved' ? 'Approved' : photo.reviewStatus === 'rejected' ? 'Rejected — retake required' : 'Pending review'}</strong></div>
+          ${photo.reviewStatus === 'rejected' && photo.rejectionReason ? `<div class="evidence-rejection-note">Retake reason: ${pvEscapeHtml(photo.rejectionReason)}</div>` : ''}
+          <button class="btn btn-primary" style="margin-top:10px;" onclick="approveEvidence(decodeURIComponent('${encodedCategory}'))">Approve Evidence</button>
+          <button class="btn btn-secondary" style="margin-top:10px;border-color:#C62828;color:#C62828;" onclick="rejectEvidence(decodeURIComponent('${encodedCategory}'))">Reject Photo — Request Retake</button>
+          <button class="btn btn-secondary" style="margin-top:10px;" onclick="deleteEvidence(decodeURIComponent('${encodedCategory}'))">Delete Evidence</button>
+        </div>`;
       go('evidenceviewer');
     }
 
@@ -4845,9 +4776,9 @@ ${photo.reviewStatus === 'rejected' && photo.rejectionReason ? `<div class="evid
         const approved = items.filter(i => i[1] === 'done').length;
         const ready = items.length > 0 && approved === items.length;
         const project = projects[p.projectId] || {name:'Unknown project'};
-        return `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(p.number)}</strong><span class="badge ${ready?'badge-green':'badge-amber'}">${ready?'Ready':'Draft available'}</span></div><div style="font-size:12.5px;color:var(--muted);margin:6px 0 12px">${escapeHTML(project.name)} · ${approved}/${items.length} items approved</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="generatePlotReport('${p.id}')">Generate / Print PDF</button><button class="btn btn-secondary btn-sm" onclick="openChecklist('${p.id}')">Review checklist</button></div></div>`;
+        return `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(p.number)}</strong><span class="badge ${ready?'badge-green':'badge-amber'}">${ready?'Ready':'Draft available'}</span></div><div style="font-size:12.5px;color:var(--muted);margin:6px 0 12px">${escapeHTML(project.name)} · ${approved}/${items.length} items approved</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="generatePlotReport('${p.id}')">Generate / Print report</button><button class="btn btn-secondary btn-sm" onclick="openChecklist('${p.id}')">Review checklist</button></div></div>`;
       }).join('') : '<div class="empty-state"><div class="ic">📄</div>No plots available. Add a plot and complete its Part L checklist to generate a report.</div>';
-      history.innerHTML = reportHistory.length ? [...reportHistory].reverse().map(r => `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(r.plotNumber)} · Part L</strong><span class="badge ${r.status==='Draft'?'badge-amber':'badge-blue'}">${r.status || 'Generated'}</span></div><div style="font-size:12px;color:var(--muted);margin:6px 0 12px">${escapeHTML(r.projectName)} · ${escapeHTML(r.generatedAt)}</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openSavedReport('${r.id}')">Open / Print</button><button class="btn btn-secondary btn-sm" onclick="downloadReportHTML('${r.id}')">Download</button><button class="btn btn-primary btn-sm" onclick="shareSavedReport('${r.id}')">Email SAP Assessor</button></div></div>`).join('') : '<div class="empty-state"><div class="ic">🗂️</div>No reports have been generated yet.</div>';
+      history.innerHTML = reportHistory.length ? [...reportHistory].reverse().map(r => `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(r.plotNumber)} · Part L</strong><span class="badge ${r.status==='Draft'?'badge-amber':'badge-blue'}">${r.status || 'Generated'}</span></div><div style="font-size:12px;color:var(--muted);margin:6px 0 12px">${escapeHTML(r.projectName)} · ${escapeHTML(r.generatedAt)}</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openSavedReport('${r.id}')">Open / Print</button><button class="btn btn-secondary btn-sm" onclick="downloadReportHTML('${r.id}')" >Download HTML</button><button class="btn btn-primary btn-sm" onclick="shareSavedReport('${r.id}')">Share report file</button></div></div>`).join('') : '<div class="empty-state"><div class="ic">🗂️</div>No reports have been generated yet.</div>';
     }
     function buildReportDocument(plot) {
       const project = projects[plot.projectId] || {};
