@@ -4849,55 +4849,7 @@ return `
 <meta name="plotvault-build" content="11.43"><title>Part L Report - ${escapeHTML(plot.number)}</title><style>
         *{box-sizing:border-box}body{font:14px Arial,sans-serif;color:#263746;margin:32px;line-height:1.45}h1,h2{color:#0F2A3D}header{border-bottom:3px solid #1E6B8C;padding-bottom:16px;margin-bottom:22px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:9px;border:1px solid #d9e0e6;vertical-align:top}th{background:#edf3f7}.footer{margin-top:32px;color:#667;font-size:12px}.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:14px}.evidence-photo{margin:0;break-inside:avoid;page-break-inside:avoid}.photo-frame{display:flex;justify-content:center;align-items:flex-end;width:100%;overflow:hidden;background:#e9eef2}.photo-image-wrap{position:relative;display:inline-block;max-width:100%;line-height:0}.photo-frame img{display:block;width:auto;height:auto;max-width:100%;max-height:430px;object-fit:contain}.photo-stamp{position:absolute;right:8px;bottom:8px;max-width:78%;display:flex;flex-direction:column;gap:2px;padding:0;background:transparent;border:0;color:#fff;font-size:10px;line-height:1.25;text-align:right;overflow-wrap:anywhere;text-shadow:0 1px 3px rgba(0,0,0,.95),1px 0 2px rgba(0,0,0,.85),-1px 0 2px rgba(0,0,0,.85)}.photo-stamp strong{font-size:12px}.evidence-photo figcaption{font-size:11px;padding:7px 1px;color:#425466}.evidence-photo figcaption small{color:#667}.no-photos{padding:16px;background:#f4f7f9;border:1px solid #d9e0e6}@media(max-width:700px){body{margin:16px}.evidence-grid{grid-template-columns:1fr}}@media print{body{margin:12mm}.evidence-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.photo-frame,.evidence-photo{break-inside:avoid;page-break-inside:avoid}.photo-stamp{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
       </style>
-<style id="plotvault-v1137-iphone-fit-and-report-navigation">
-/* v11.37: use the full iPhone viewport and give Plot Overview more room. */
-html, body { width:100%; max-width:100%; min-height:100%; overflow-x:hidden; }
-@media (max-width:600px) {
-  html, body { height:100%; height:100dvh; }
-  body { margin:0 !important; padding:0 !important; min-height:0 !important; width:100% !important; display:block !important; }
-  #frame { width:100% !important; max-width:none !important; height:100vh !important; height:100dvh !important; min-height:0 !important; border-radius:0 !important; }
-  #statusbar { flex:0 0 27px !important; height:27px !important; }
-  #screens { flex:1 1 auto !important; min-height:0 !important; height:0 !important; }
-}
-#screen-plotoverview { height:100%; min-height:0; overflow:hidden !important; }
-#screen-plotoverview.active { display:flex !important; flex-direction:column !important; }
-#screen-plotoverview > .topnav { flex:0 0 auto !important; min-height:59px !important; padding:9px 15px !important; }
-#screen-plotoverview .screen-body#po-body {
-  flex:1 1 auto !important; height:auto !important; min-height:0 !important;
-  overflow:hidden !important; padding:12px 14px 10px !important;
-  display:flex !important; flex-direction:column !important; justify-content:center !important;
-}
-#screen-plotoverview .po23-wrap { width:100%; display:flex; flex-direction:column; gap:clamp(8px,1.35vh,13px) !important; padding:0 !important; }
-#screen-plotoverview .po23-hero { min-height:clamp(137px,19vh,174px) !important; height:clamp(137px,19vh,174px) !important; padding:16px 18px !important; }
-#screen-plotoverview .po23-number { font-size:clamp(42px,6vh,52px) !important; }
-#screen-plotoverview .po23-house { height:clamp(96px,14vh,120px) !important; }
-#screen-plotoverview .po23-camera { min-height:clamp(57px,8vh,68px) !important; height:auto !important; padding:10px 15px !important; }
-#screen-plotoverview .po23-camera-icon { font-size:27px !important; }
-#screen-plotoverview .po23-compliance { padding:12px 13px !important; }
-#screen-plotoverview .po23-count { min-height:58px !important; grid-template-rows:25px 15px !important; padding:7px 5px !important; }
-#screen-plotoverview .po23-count strong { font-size:19px !important; }
-#screen-plotoverview .po23-count small { font-size:10px !important; }
-#screen-plotoverview .po23-link-card { min-height:57px !important; height:auto !important; padding:8px 12px !important; }
-#screen-plotoverview .po23-link-icon { width:35px !important; height:35px !important; flex-basis:35px !important; font-size:19px !important; }
-#screen-plotoverview .po23-link-copy strong { font-size:12px !important; }
-#screen-plotoverview .po23-link-copy small { font-size:9px !important; }
-#screen-plotoverview > div:last-child { flex:0 0 auto !important; padding:5px 14px calc(7px + env(safe-area-inset-bottom)) !important; }
-#screen-plotoverview > div:last-child .btn { min-height:39px !important; }
-@media (max-height:740px) {
- #screen-plotoverview .screen-body#po-body { padding:7px 12px 5px !important; }
- #screen-plotoverview .po23-wrap { gap:6px !important; }
- #screen-plotoverview .po23-hero { min-height:120px !important; height:120px !important; }
- #screen-plotoverview .po23-camera { min-height:49px !important; }
- #screen-plotoverview .po23-compliance { padding:7px 10px !important; }
- #screen-plotoverview .po23-count { min-height:46px !important; }
- #screen-plotoverview .po23-link-card { min-height:45px !important; padding:5px 9px !important; }
- #screen-plotoverview .po23-link-icon { width:29px !important; height:29px !important; flex-basis:29px !important; }
-}
-/* Report navigation is visible on screen but omitted from the printed PDF. */
-.report-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; margin:-16px -16px 18px; background:#17354b; color:#fff; }
-.report-toolbar button { border:1px solid rgba(255,255,255,.45); border-radius:8px; padding:9px 13px; background:rgba(255,255,255,.12); color:#fff; font-weight:700; font-size:13px; cursor:pointer; }
-@media print { .report-toolbar { display:none !important; } }
-</style>
+
 
 <style id="plotvault-v1139-full-iphone-plot-overview">
 /* v11.39: use the full usable iPhone viewport; distribute Plot Overview content vertically. */
@@ -5056,113 +5008,9 @@ html, body { width:100%; max-width:100%; min-height:100%; overflow-x:hidden; }
 </style>
 
 
-<style id="plotvault-v1148-viewport-authority">
-/* v11.48: authoritative viewport and Plot Overview layout. This block is deliberately
-   the final stylesheet so earlier legacy rules cannot shrink or hide the footer. */
-@media (max-width: 700px) {
-  html, body { width:100% !important; height:100% !important; min-height:0 !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
-  body { display:block !important; }
-  #frame { position:relative !important; display:flex !important; flex-direction:column !important; width:100% !important; height:100vh !important; height:100dvh !important; min-height:0 !important; max-height:none !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
-  #statusbar { flex:0 0 24px !important; height:24px !important; min-height:24px !important; }
-  #screens { position:relative !important; flex:1 1 0 !important; width:100% !important; height:0 !important; min-height:0 !important; overflow:hidden !important; }
-  .screen { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; min-height:0 !important; max-height:none !important; }
-  #screen-plotoverview { position:absolute !important; inset:0 !important; display:none !important; flex-direction:column !important; width:100% !important; height:100% !important; min-height:0 !important; max-height:none !important; overflow:hidden !important; }
-  #screen-plotoverview.active { display:flex !important; }
-  #screen-plotoverview > .topnav { position:relative !important; inset:auto !important; flex:0 0 50px !important; height:50px !important; min-height:50px !important; width:100% !important; padding:5px 12px !important; }
-  #screen-plotoverview > #po-body.screen-body { display:flex !important; flex:1 1 0 !important; height:0 !important; min-height:0 !important; width:100% !important; overflow:hidden !important; padding:8px 11px 7px !important; margin:0 !important; }
-  #screen-plotoverview #po-body > .po23-wrap { display:flex !important; flex:1 1 0 !important; flex-direction:column !important; justify-content:space-between !important; align-items:stretch !important; width:100% !important; height:100% !important; min-height:0 !important; gap:6px !important; padding:0 !important; margin:0 !important; }
-  #screen-plotoverview .po23-hero { flex:1.25 1 0 !important; height:auto !important; min-height:105px !important; max-height:none !important; padding:10px 14px !important; }
-  #screen-plotoverview .po23-camera { flex:.62 1 0 !important; height:auto !important; min-height:50px !important; max-height:none !important; padding:7px 12px !important; }
-  #screen-plotoverview .po23-compliance { flex:1.12 1 0 !important; height:auto !important; min-height:100px !important; max-height:none !important; padding:8px 10px !important; }
-  #screen-plotoverview .po23-counts { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:7px !important; }
-  #screen-plotoverview .po23-count { display:grid !important; grid-template-columns:1fr !important; grid-template-rows:20px 20px 14px !important; align-content:center !important; justify-items:center !important; align-items:center !important; gap:1px !important; min-width:0 !important; min-height:58px !important; height:auto !important; padding:4px 2px !important; text-align:center !important; }
-  #screen-plotoverview .po23-count-icon { margin:0 auto !important; }
-  #screen-plotoverview .po23-count strong, #screen-plotoverview .po23-count small { display:block !important; width:100% !important; text-align:center !important; line-height:1.15 !important; }
-  #screen-plotoverview .po23-link-card { display:flex !important; flex:1 1 0 !important; height:auto !important; min-height:58px !important; max-height:none !important; width:100% !important; padding:7px 11px !important; gap:10px !important; }
-  #screen-plotoverview .po23-link-icon { flex:0 0 36px !important; width:36px !important; height:36px !important; }
-  #screen-plotoverview .po23-link-copy { flex:1 1 auto !important; min-width:0 !important; }
-  #screen-plotoverview .po23-link-card.po23-timeline-card { flex:1 1 0 !important; }
-  #screen-plotoverview .po23-timeline-detail { flex:0 1 auto !important; max-height:42px !important; overflow:auto !important; }
-  #screen-plotoverview > .po-delete-footer { display:block !important; position:relative !important; flex:0 0 auto !important; width:100% !important; min-height:54px !important; padding:6px 11px calc(7px + env(safe-area-inset-bottom,0px)) !important; margin:0 !important; background:#f3f6fa !important; z-index:5 !important; }
-  #screen-plotoverview > .po-delete-footer .btn { display:block !important; width:100% !important; height:41px !important; min-height:41px !important; margin:0 !important; }
-}
-@media (max-width:700px) and (max-height:740px) {
-  #screen-plotoverview > .topnav { flex-basis:44px !important; height:44px !important; min-height:44px !important; }
-  #screen-plotoverview > #po-body.screen-body { padding-top:5px !important; padding-bottom:4px !important; }
-  #screen-plotoverview #po-body > .po23-wrap { gap:4px !important; }
-  #screen-plotoverview .po23-hero { min-height:92px !important; }
-  #screen-plotoverview .po23-camera { min-height:45px !important; }
-  #screen-plotoverview .po23-compliance { min-height:88px !important; }
-  #screen-plotoverview .po23-count { min-height:49px !important; grid-template-rows:17px 17px 12px !important; }
-  #screen-plotoverview .po23-link-card { min-height:49px !important; padding:5px 9px !important; }
-  #screen-plotoverview .po23-link-icon { width:31px !important; height:31px !important; flex-basis:31px !important; }
-  #screen-plotoverview > .po-delete-footer { min-height:48px !important; padding-top:4px !important; padding-bottom:4px !important; }
-  #screen-plotoverview > .po-delete-footer .btn { height:38px !important; min-height:38px !important; }
-}
-</style>
+
 </head><body><nav class="report-toolbar" aria-label="Report navigation"><strong>PlotVault Evidence Report</strong><button type="button" onclick="window.close();setTimeout(function(){if(!window.closed){history.back();}},120)">← Back to PlotVault</button></nav><header><h1>PlotVault — Part L Evidence Report</h1><div>${escapeHTML(project.name || '')} · ${escapeHTML(project.location || '')}</div></header><h2>Plot details</h2><div class="meta"><div><b>Plot:</b> ${escapeHTML(plot.number)}</div><div><b>House type:</b> ${escapeHTML(plot.houseType || 'Not recorded')}</div><div><b>Build stage:</b> ${escapeHTML(plot.stage || 'Not recorded')}</div><div><b>Report generated:</b> ${new Date().toLocaleString('en-GB')}</div><div><b>Client:</b> ${escapeHTML(project.client || 'Not recorded')}</div><div><b>Site manager:</b> ${escapeHTML(project.siteManager || 'Not recorded')}</div></div>${(settings.showCompany && settings.company) || project.sapAssessor || project.sapAssessorEmail ? `<h2>Company / SAP Assessor</h2><p>${settings.showCompany ? `${escapeHTML(settings.company)}<br>${escapeHTML(settings.address)}<br>${escapeHTML(settings.phone)} · ${escapeHTML(settings.companyEmail)}<br>` : ''}SAP Assessor: ${escapeHTML(project.sapAssessor || 'Not recorded')}<br>SAP Assessor email: ${escapeHTML(project.sapAssessorEmail || 'Not recorded')}</p>` : ''}<h2>Part L checklist</h2><table><thead><tr><th>Inspection item</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table><h2>Photographic evidence</h2><p>Each photograph is stamped in the corner with its project name, plot, section, capture date/time and GPS coordinates where available.</p><div class="evidence-grid">${photos || '<div class="no-photos">No evidence photos recorded for this plot.</div>'}</div><h2>Evidence register</h2><table><thead><tr><th>#</th><th>Section</th><th>Date / time</th><th>GPS coordinates</th><th>Notes</th></tr></thead><tbody>${evidenceRegister || '<tr><td colspan="5">No evidence photos recorded.</td></tr>'}</tbody></table><p><b>Checklist completion:</b> ${(plot.checklist || []).filter(i=>i[1]==='done').length} / ${(plot.checklist || []).length} approved</p><div class="footer">${escapeHTML(settings.reportFooter || 'Generated by PlotVault. This report records the data held in the application at the time of generation.')}</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script>
-<style id="plotvault-v1144-plot-screen-balanced-fit">
-/* v11.44: reserve a real footer for Delete Plot, then use the remaining
-   iPhone viewport for larger, more closely grouped plot tiles. */
-#screen-plotoverview {
-  display:none; overflow:hidden !important; flex-direction:column;
-  min-height:0; height:100%; box-sizing:border-box;
-}
-#screen-plotoverview.active { display:flex; }
-#screen-plotoverview > .topnav { flex:0 0 auto; padding:7px 13px !important; }
-#screen-plotoverview > .screen-body,
-#screen-plotoverview #po-body {
-  flex:1 1 0 !important; min-height:0 !important; height:auto !important;
-  overflow:hidden !important; padding:5px 11px 4px !important;
-}
-#screen-plotoverview .po23-wrap {
-  display:flex !important; flex-direction:column !important;
-  gap:6px !important; padding:0 !important; min-height:0;
-}
-#screen-plotoverview .po23-hero {
-  flex:0 0 auto !important; min-height:126px !important;
-  padding:12px 15px 11px !important; border-radius:15px !important;
-}
-#screen-plotoverview .po23-number { font-size:40px !important; margin:2px 0 3px !important; }
-#screen-plotoverview .po23-status { margin-top:5px !important; position:relative; z-index:2; }
-#screen-plotoverview .po23-progress-line { bottom:8px !important; left:15px !important; right:58px !important; gap:8px !important; }
-#screen-plotoverview .po23-progress-track { height:7px !important; }
-#screen-plotoverview .po23-camera {
-  flex:0 0 auto !important; min-height:51px !important;
-  padding:7px 12px !important; gap:9px !important;
-}
-#screen-plotoverview .po23-compliance {
-  flex:0 0 auto !important; padding:9px 10px !important;
-}
-#screen-plotoverview .po23-section-head { margin-bottom:6px !important; }
-#screen-plotoverview .po23-counts { gap:6px !important; }
-#screen-plotoverview .po23-count {
-  min-height:59px !important; grid-template-columns:23px 1fr !important;
-  grid-template-rows:26px 14px !important; padding:6px 4px !important;
-}
-#screen-plotoverview .po23-count-icon { width:20px !important; height:20px !important; }
-#screen-plotoverview .po23-count strong { font-size:18px !important; }
-#screen-plotoverview .po23-link-card {
-  flex:0 0 auto !important; min-height:50px !important;
-  padding:6px 10px !important; gap:8px !important;
-}
-#screen-plotoverview .po23-link-icon { width:33px !important; height:33px !important; flex-basis:33px !important; }
-#screen-plotoverview .po23-timeline-detail { padding:6px 9px !important; }
-/* The previous inline 90px bottom padding pushed Delete Plot below the fold. */
-#screen-plotoverview > div[style*="padding:0 16px 90px"] {
-  flex:0 0 auto !important; padding:4px 12px calc(5px + env(safe-area-inset-bottom)) !important;
-  margin:0 !important;
-}
-#screen-plotoverview > div[style*="padding:0 16px 90px"] .btn {
-  min-height:40px !important; padding:8px 12px !important; margin:0 !important;
-}
-@media(max-height:740px) {
-  #screen-plotoverview .po23-wrap { gap:5px !important; }
-  #screen-plotoverview .po23-hero { min-height:116px !important; padding-top:9px !important; }
-  #screen-plotoverview .po23-count { min-height:54px !important; }
-  #screen-plotoverview .po23-link-card { min-height:46px !important; }
-}
-</style>
+
 
 
 
