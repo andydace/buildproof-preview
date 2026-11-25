@@ -4768,45 +4768,56 @@ return `
     }
 
     function addPlot() {
+      const projectId = state.projectId;
+      if (!projects[projectId]) { toast('Select a project before adding a plot'); return; }
       const plotNumber = prompt('Enter plot number');
-      if (!plotNumber || !plotNumber.trim()) return;
-      if (!projects[state.projectId]) { toast('Select a project before adding a plot'); return; }
-      if (Object.values(plots).some(p => p && p.projectId === state.projectId && String(p.number).trim().toLowerCase() === plotNumber.trim().toLowerCase())) {
+      if (plotNumber === null) return;
+      const cleanNumber = plotNumber.trim();
+      if (!cleanNumber) { toast('Enter a plot number'); return; }
+      if (Object.values(plots).some(p => p && p.projectId === projectId && String(p.number || '').trim().toLowerCase() === cleanNumber.toLowerCase())) {
         toast('That plot number already exists in this project'); return;
       }
       const id = 'plot_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
-      plots[id] = { id, projectId:state.projectId, number:plotNumber.trim(), houseType:'New Plot', stage:'Not Started', status:'Not Started', score:0, last:'Just created', checklist:mkChecklist('missing'), missing:[], timeline:[], gallery:[] };
+      plots[id] = { id, projectId, number:cleanNumber, houseType:'New Plot', stage:'Not Started', status:'Not Started', score:0, last:'Just created', checklist:mkChecklist('missing'), missing:[], timeline:[], gallery:[] };
       if (!saveData()) { delete plots[id]; return; }
       renderPlotList(); renderProjects(); toast('Plot added and saved');
     }
 
     function editPlot() {
-
       const plot = plots[state.plotId];
+      if (!plot) { toast('Select a plot before editing'); return; }
 
-      const newNumber =
-        prompt("Plot Number", plot.number);
+      const newNumber = prompt('Plot Number', String(plot.number || ''));
+      if (newNumber === null) return;
+      const cleanNumber = newNumber.trim();
+      if (!cleanNumber) { toast('Plot number cannot be blank'); return; }
 
-      if (!newNumber) return;
+      const duplicate = Object.values(plots).some(other =>
+        other && other.id !== plot.id && other.projectId === plot.projectId &&
+        String(other.number || '').trim().toLowerCase() === cleanNumber.toLowerCase()
+      );
+      if (duplicate) { toast('That plot number already exists in this project'); return; }
 
-      const newHouseType =
-        prompt("House Type", plot.houseType);
+      const newHouseType = prompt('House Type', String(plot.houseType || 'New Plot'));
+      if (newHouseType === null) return;
+      const cleanHouseType = newHouseType.trim();
+      if (!cleanHouseType) { toast('House type cannot be blank'); return; }
 
-      if (!newHouseType) return;
-      const newStage =
-        prompt("Build Stage", plot.stage);
+      const newStage = prompt('Build Stage', String(plot.stage || 'Not Started'));
+      if (newStage === null) return;
+      const cleanStage = newStage.trim();
+      if (!cleanStage) { toast('Build stage cannot be blank'); return; }
 
-      if (!newStage) return;
-      const newStatus =
-        prompt("Status", plot.status);
-
-      if (!newStatus) return;
+      const newStatus = prompt('Status', String(plot.status || 'Not Started'));
+      if (newStatus === null) return;
+      const cleanStatus = newStatus.trim();
+      if (!cleanStatus) { toast('Plot status cannot be blank'); return; }
 
       const previousPlot = { ...plot };
-      plot.number = newNumber;
-      plot.houseType = newHouseType;
-      plot.stage = newStage;
-      plot.status = newStatus;
+      plot.number = cleanNumber;
+      plot.houseType = cleanHouseType;
+      plot.stage = cleanStage;
+      plot.status = cleanStatus;
 
       if (!saveData()) {
         Object.assign(plot, previousPlot);
@@ -4814,9 +4825,8 @@ return `
       }
 
       renderPlotList();
-
-      toast("Plot updated");
-
+      renderProjects();
+      toast('Plot updated');
       renderPlotOverview();
     }
 
