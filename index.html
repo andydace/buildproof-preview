@@ -3394,6 +3394,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     function editProject() {
 
       const project = projects[state.projectId];
+      if (!project) { toast('Select a project before editing'); return; }
 
       const newName =
         prompt("Project Name", project.name);
@@ -3449,7 +3450,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       renderProjects(); toast('Project updated');
     }
 
-    function openPlot(id) { state.plotId = id; state.projectId = plots[id].projectId; go('plotoverview'); }
+    function openPlot(id) { const plot = plots[id]; if (!plot) { toast('This plot is no longer available'); return; } state.plotId = id; state.projectId = plot.projectId; go('plotoverview'); }
     function openChecklist(id) { state.plotId = id; go('checklist'); }
     function openCamera(projectId) {
       state.photoProject = projectId; state.photoPlot = null; state.photoCategory = null;
@@ -4430,16 +4431,23 @@ return `
 
     // ENHANCED FILTERING
     function filterPlots(q = "") {
-      const txt = (q || "").toLowerCase();
+      const txt = String(q || '').toLowerCase();
       const active = document.querySelector('#screen-projectdetails .chip.active');
       const status = active ? active.textContent.trim() : "All";
       const container = document.getElementById('plot-list');
-      const list = Object.values(plots).filter(p => p.projectId === state.projectId).filter(p => {
-        const match = !txt || p.number.toLowerCase().includes(txt) || p.houseType.toLowerCase().includes(txt) || p.status.toLowerCase().includes(txt);
-        const sf = status === 'All' || p.status === status;
+      if (!container) return;
+      const list = Object.values(plots).filter(p => p && p.projectId === state.projectId).filter(p => {
+        const number = String(p.number || '');
+        const houseType = String(p.houseType || '');
+        const plotStatus = String(p.status || 'Not Started');
+        const match = !txt || number.toLowerCase().includes(txt) || houseType.toLowerCase().includes(txt) || plotStatus.toLowerCase().includes(txt);
+        const sf = status === 'All' || plotStatus === status;
         return match && sf;
       });
-      container.innerHTML = list.map(p => `<div class="card tap" onclick="openPlot(decodeURIComponent('${pvEventArg(p.id)}'))"><div class="row"><span style="font-weight:800;color:var(--navy);">${escapeHTML(p.number)}</span><span class="badge ${statusMeta(p.status).badge}">${escapeHTML(p.status)}</span></div><div style="font-size:12.5px;color:var(--muted);margin-top:2px;">${escapeHTML(p.houseType)}</div></div>`).join('');
+      container.innerHTML = list.map(p => {
+        const plotStatus = String(p.status || 'Not Started');
+        return `<div class="card tap" onclick="openPlot(decodeURIComponent('${pvEventArg(p.id)}'))"><div class="row"><span style="font-weight:800;color:var(--navy);">${escapeHTML(p.number || 'Plot')}</span><span class="badge ${statusMeta(plotStatus).badge}">${escapeHTML(plotStatus)}</span></div><div style="font-size:12.5px;color:var(--muted);margin-top:2px;">${escapeHTML(p.houseType || 'New Plot')}</div></div>`;
+      }).join('') || '<div class="empty-state">No plots match this filter.</div>';
     }
 
     function updateDashboardStats() {
