@@ -5002,8 +5002,11 @@ return `
     }
 
     function renderDashboardProjects() {
-      const el=document.getElementById('dashboard-project-list');if(!el)return;
-      el.innerHTML=Object.values(projects).map(p=>`<div class="card tap" onclick="openProject('${p.id}')"><strong>${escapeHTML(p.name)}</strong><div style="font-size:12px;color:var(--muted)">${escapeHTML(p.location||'Location not set')} · ${Object.values(plots).filter(x=>x.projectId===p.id).length} plots</div></div>`).join('') || '<div class="empty-state">No projects yet.</div>';
+      const el = document.getElementById('dashboard-project-list');
+      if (!el) return;
+      el.innerHTML = Object.values(projects).filter(Boolean).map(project =>
+        `<div class="card tap" onclick="openProject(decodeURIComponent('${pvEventArg(project.id)}'))"><strong>${escapeHTML(project.name || 'Untitled project')}</strong><div style="font-size:12px;color:var(--muted)">${escapeHTML(project.location || 'Location not set')} · ${Object.values(plots).filter(plot => plot && plot.projectId === project.id).length} plots</div></div>`
+      ).join('') || '<div class="empty-state">No projects yet.</div>';
     }
 
     /*-------------- TOAST ---------------- */
