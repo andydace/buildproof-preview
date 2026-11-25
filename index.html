@@ -3143,27 +3143,51 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
     const PLOTVAULT_VERSION = '11.54';
     function saveData() {
+      const keys = {
+        projects: 'plotvaultProjects',
+        plots: 'plotvaultPlots',
+        reports: 'plotvaultReports',
+        settings: 'plotvaultSettings',
+        version: 'plotvaultVersion'
+      };
+      let previous = null;
       try {
         const payload = {
           projects: JSON.stringify(projects),
           plots: JSON.stringify(plots),
           reports: JSON.stringify(reportHistory),
-          settings: JSON.stringify(appSettings)
+          settings: JSON.stringify(appSettings),
+          version: PLOTVAULT_VERSION
         };
-        localStorage.setItem('plotvaultProjects', payload.projects);
-        localStorage.setItem('plotvaultPlots', payload.plots);
-        localStorage.setItem('plotvaultReports', payload.reports);
-        localStorage.setItem('plotvaultSettings', payload.settings);
-        localStorage.setItem('plotvaultVersion', PLOTVAULT_VERSION);
-        // Read-after-write verification catches Safari storage failures immediately.
-        if (localStorage.getItem('plotvaultPlots') !== payload.plots ||
-            localStorage.getItem('plotvaultProjects') !== payload.projects) {
-          throw new Error('Local storage verification failed');
-        }
+        // Keep a copy of the previous values so a failed multi-key write can be
+        // rolled back instead of leaving a mixed old/new workspace behind.
+        previous = {};
+        Object.entries(keys).forEach(([name, key]) => { previous[key] = localStorage.getItem(key); });
+
+        Object.entries(keys).forEach(([name, key]) => {
+          localStorage.setItem(key, payload[name]);
+        });
+
+        const verified = Object.entries(keys).every(([name, key]) => localStorage.getItem(key) === payload[name]);
+        if (!verified) throw new Error('Local storage verification failed');
         return true;
       } catch (error) {
+        let rollbackSucceeded = true;
+        if (previous) {
+          Object.entries(previous).forEach(([key, value]) => {
+            try {
+              if (value === null) localStorage.removeItem(key);
+              else localStorage.setItem(key, value);
+            } catch (rollbackError) {
+              rollbackSucceeded = false;
+              console.error('PlotVault storage rollback failed for ' + key, rollbackError);
+            }
+          });
+        }
         console.error('PlotVault save failed', error);
-        toast('Unable to save data on this device. Check Safari storage settings and available space.');
+        toast(rollbackSucceeded
+          ? 'Unable to save data on this device. Your previous saved workspace has been retained.'
+          : 'A storage error occurred and automatic recovery could not be fully verified. Stop editing and export a backup if the app is still accessible.');
         return false;
       }
     }
