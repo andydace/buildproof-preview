@@ -4387,14 +4387,27 @@ return `
     }
     function renderSearch(q) {
       const container = document.getElementById('search-results');
+      if (!container) return;
       if (!q) { container.innerHTML = `<p style="color:var(--muted);font-size:13px;text-align:center;margin-top:30px;">Start typing to search across every project.</p>`; return; }
-      const ql = q.toLowerCase();
-      const matchedPlots = Object.values(plots).filter(p => p.number.toLowerCase().includes(ql) || p.houseType.toLowerCase().includes(ql) || p.status.toLowerCase().includes(ql));
-      const matchedProjects = Object.values(projects).filter(pr => pr.name.toLowerCase().includes(ql) || pr.location.toLowerCase().includes(ql));
-      if (!matchedPlots.length && !matchedProjects.length) { container.innerHTML = `<div class="empty-state"><div class="ic">🔍</div>No results for "${q}"</div>`; return; }
+      const query = String(q).toLowerCase();
+      const matchedPlots = Object.values(plots).filter(p =>
+        p && [p.number,p.houseType,p.status].some(value => String(value || '').toLowerCase().includes(query))
+      );
+      const matchedProjects = Object.values(projects).filter(project =>
+        project && [project.name,project.location].some(value => String(value || '').toLowerCase().includes(query))
+      );
+      if (!matchedPlots.length && !matchedProjects.length) {
+        container.innerHTML = `<div class="empty-state"><div class="ic">🔍</div>No results for "${escapeHTML(q)}"</div>`;
+        return;
+      }
       container.innerHTML =
-        (matchedProjects.length ? `<div class="label-eyebrow" style="margin-top:8px;">PROJECTS</div>` + matchedProjects.map(pr => `<div class="card tap" onclick="openProject('${pr.id}')"><span style="font-weight:700;color:var(--navy);">${pr.name}</span><div style="font-size:12px;color:var(--muted);">${pr.location}</div></div>`).join('') : '') +
-        (matchedPlots.length ? `<div class="label-eyebrow" style="margin-top:8px;">PLOTS</div>` + matchedPlots.map(p => `<div class="card tap" onclick="openPlot(decodeURIComponent('${pvEventArg(p.id)}'))"><div class="row"><span style="font-weight:700;color:var(--navy);">${p.number}</span><span class="badge ${statusMeta(p.status).badge}">${p.status}</span></div><div style="font-size:12px;color:var(--muted);">${projects[p.projectId].name}</div></div>`).join('') : '');
+        (matchedProjects.length ? `<div class="label-eyebrow" style="margin-top:8px;">PROJECTS</div>` + matchedProjects.map(project =>
+          `<div class="card tap" onclick="openProject(decodeURIComponent('${pvEventArg(project.id)}'))"><span style="font-weight:700;color:var(--navy);">${escapeHTML(project.name)}</span><div style="font-size:12px;color:var(--muted);">${escapeHTML(project.location)}</div></div>`
+        ).join('') : '') +
+        (matchedPlots.length ? `<div class="label-eyebrow" style="margin-top:8px;">PLOTS</div>` + matchedPlots.map(plot => {
+          const project = projects[plot.projectId] || { name: 'Project not recorded' };
+          return `<div class="card tap" onclick="openPlot(decodeURIComponent('${pvEventArg(plot.id)}'))"><div class="row"><span style="font-weight:700;color:var(--navy);">${escapeHTML(plot.number)}</span><span class="badge ${statusMeta(plot.status).badge}">${escapeHTML(plot.status)}</span></div><div style="font-size:12px;color:var(--muted);">${escapeHTML(project.name)}</div></div>`;
+        }).join('') : '');
     }
     function setChip(el, group, forceLabel) {
       const row = el ? el.parentElement : document.querySelector('.chip.active').parentElement;
