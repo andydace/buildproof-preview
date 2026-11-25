@@ -4328,47 +4328,43 @@ ${photo.reviewStatus === 'rejected' && photo.rejectionReason ? `<div class="evid
     }
 
     function deleteEvidence(category) {
-
-      if (!confirm(
-        `Delete evidence for:\n\n${category}?`
-      )) {
-        return;
-      }
-
       const plotId = state.plotId;
+      const plot = plots[plotId];
+      if (!plot || !Array.isArray(plot.gallery)) { toast('This plot evidence is unavailable.'); return; }
 
-      const gallery = plots[plotId].gallery;
+      const selected = state.selectedPhoto;
+      let index = selected ? plot.gallery.indexOf(selected) : -1;
+      if (index < 0) index = plot.gallery.findIndex(photo => photo && photo.category === category);
+      if (index < 0) { toast('The selected evidence could not be found.'); return; }
 
-      const index = gallery.findIndex(
-        p => p.category === category
-      );
+      const photo = plot.gallery[index];
+      const photoCategory = photo.category || category || 'Other';
+      if (!confirm(`Delete this ${photoCategory} evidence photo? This cannot be undone.`)) return;
 
-      if (index === -1) {
+      const previousGallery = plot.gallery.slice();
+      const previousChecklist = Array.isArray(plot.checklist) ? plot.checklist.map(item => Array.isArray(item) ? item.slice() : item) : [];
+      const previousScore = plot.score;
+      const previousStatus = plot.status;
+
+      plot.gallery.splice(index, 1);
+      const evidenceStillExists = plot.gallery.some(item => item && item.category === photoCategory);
+      const checklistItem = (plot.checklist || []).find(item => Array.isArray(item) && item[0] === photoCategory);
+      if (checklistItem && !evidenceStillExists) {
+        checklistItem[1] = 'missing';
+        updatePlotScore(plotId);
+      }
+
+      if (!saveData()) {
+        plot.gallery = previousGallery;
+        plot.checklist = previousChecklist;
+        plot.score = previousScore;
+        plot.status = previousStatus;
         return;
       }
 
-      gallery.splice(index, 1);
-
-      const evidenceStillExists = gallery.some(
-        p => p.category === category
-      );
-
-      const item = plots[plotId].checklist.find(
-        c => c[0] === category
-      );
-
-      if (item && !evidenceStillExists) {
-
-        item[1] = 'missing';
-
-        updatePlotScore(plotId);
-
-      }
-
-      saveData();
-
+      state.selectedPhoto = null;
       openPlot(plotId);
-
+      toast('Evidence photo deleted and saved.');
     }
 
     function levelDot(level) { return { red: 'dot-red', amber: 'dot-amber', green: 'dot-green', blue: 'dot-green' }[level] || 'dot-amber'; }
@@ -4679,23 +4675,49 @@ ${photo.reviewStatus === 'rejected' && photo.rejectionReason ? `<div class="evid
     }
 
     function deleteProject(id) {
-      const project = projects[id]; if (!project) return;
-      const relatedPlots = Object.values(plots).filter(p => p.projectId === id);
-      const relatedReports = reportHistory.filter(r => r.projectId === id);
+      const project = projects[id];
+      if (!project) return;
+      const relatedPlots = Object.values(plots).filter(plot => plot.projectId === id);
+      const relatedReports = reportHistory.filter(report => report.projectId === id);
       const message = `Delete "${project.name}"? This will also delete ${relatedPlots.length} plot(s) and their live evidence/checklists. ${relatedReports.length} previously generated report(s) will be preserved in the Reports library. This cannot be undone.`;
       if (!confirm(message)) return;
-      relatedPlots.forEach(p => delete plots[p.id]);
+
+      const previousProjectId = state.projectId;
+      const plotEntries = relatedPlots.map(plot => [plot.id, plot]);
       delete projects[id];
-      state.projectId = Object.keys(projects)[0] || ''; saveData(); renderProjects(); renderReports(); go('projects'); toast('Project deleted');
+      plotEntries.forEach(([plotId]) => delete plots[plotId]);
+      state.projectId = Object.keys(projects)[0] || '';
+
+      if (!saveData()) {
+        projects[id] = project;
+        plotEntries.forEach(([plotId, plot]) => { plots[plotId] = plot; });
+        state.projectId = previousProjectId;
+        return;
+      }
+
+      renderProjects();
+      renderReports();
+      go('projects');
+      toast('Project deleted and saved.');
     }
 
     function deletePlot(id) {
-      const plot = plots[id]; if (!plot) return;
-      const evidenceCount = (plot.gallery || []).length;
-      const savedReports = reportHistory.filter(r => r.plotId === id).length;
+      const plot = plots[id];
+      if (!plot) return;
+      const evidenceCount = Array.isArray(plot.gallery) ? plot.gallery.length : 0;
+      const savedReports = reportHistory.filter(report => report.plotId === id).length;
       if (!confirm(`Delete ${plot.number}? This will permanently delete its ${evidenceCount} evidence photo(s), checklist and timeline. ${savedReports} previously generated report(s) will be preserved in the Reports library. This cannot be undone.`)) return;
+
       delete plots[id];
-      saveData(); renderPlotList(); renderProjects(); go('projectdetails'); toast('Plot deleted');
+      if (!saveData()) {
+        plots[id] = plot;
+        return;
+      }
+
+      renderPlotList();
+      renderProjects();
+      go('projectdetails');
+      toast('Plot deleted and saved.');
     }
 
     let plotCreateInProgress = false;
@@ -5169,7 +5191,12 @@ html, body { width:100%; max-width:100%; min-height:100%; overflow-x:hidden; }
       const isDraft = !items.length || items.some(i => i[1] !== 'done');
       const project = projects[plot.projectId] || {};
       const record = { id:'report_'+Date.now(), plotId, projectId:plot.projectId, plotNumber:plot.number, projectName:project.name || '', sapAssessor:project.sapAssessor || '', sapAssessorEmail:project.sapAssessorEmail || '', generatedAt:new Date().toLocaleString('en-GB'), status:isDraft?'Draft':'Approved', html:buildReportDocument(plot) };
-      reportHistory.push(record); saveData(); renderReports();
+      reportHistory.push(record);
+      if (!saveData()) {
+        reportHistory.pop();
+        return;
+      }
+      renderReports();
       const win = window.open('', '_blank');
       if (!win) { toast('Report saved to history. Allow pop-ups to open the print view.'); return; }
       win.document.open(); win.document.write(record.html); win.document.close();
