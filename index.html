@@ -3490,145 +3490,119 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected'); state.photoCategory = name;
     }
-    function savePhoto() {
+    async function savePhoto() {
+      // Prevent double taps while GPS and local storage are being processed.
+      if (state.photoSaveInProgress) return;
+      if (!state.photoImage) { toast('The photo is still loading. Please wait and try again.'); return; }
+      if (!projects[state.photoProject]) { toast('The selected project could not be found.'); return; }
+      if (state.photoPlot && !plots[state.photoPlot]) { toast('The selected plot could not be found.'); return; }
 
+      state.photoSaveInProgress = true;
       showLoading();
 
-      state.photoNotes =
-        document.getElementById('notes-input').value;
+      const plotId = state.photoPlot;
+      const projectId = state.photoProject;
+      const category = state.photoCategory || 'Other';
+      const notes = (document.getElementById('notes-input') || {}).value || '';
+      let gps = { latitude: null, longitude: null, altitude: null, accuracy: null };
 
-      if (navigator.geolocation) {
-
-        console.log("REQUESTING GPS");
-
-        navigator.geolocation.getCurrentPosition(
-
-          position => {
-
-            console.log("GPS RECEIVED");
-
-            state.photoLat = position.coords.latitude;
-            state.photoLng = position.coords.longitude;
-            state.photoAltitude = position.coords.altitude;
-            state.photoAccuracy = position.coords.accuracy;
-            console.log(
-              "GPS:",
-              state.photoLat,
-              state.photoLng
-            );
-            if (state.photoPlot && plots[state.photoPlot]) {
-
-              console.log(
-                "ADDING PHOTO TO GALLERY",
-                state.photoImage
-              );
-
-              plots[state.photoPlot].gallery.unshift({
-
-                project:
-                  projects[state.photoProject].name,
-
-                plot:
-                  plots[state.photoPlot].number,
-
-                category:
-                  state.photoCategory || "Other",
-
-                image: state.photoImage,
-
-                testImage: state.photoImage ? "YES" : "NO",
-
-                capturedBy: appSettings.assessor || "Not recorded",
-
-                colour: "#1F8A4C",
-                reviewStatus: "pending",
-
-                latitude:
-                  state.photoLat,
-
-                longitude:
-                  state.photoLng,
-
-                altitude:
-                  state.photoAltitude,
-                accuracy:
-                  state.photoAccuracy,
-                notes:
-                  state.photoNotes,
-
-
-
-                timestamp:
-                  new Date().toLocaleString()
-
+      try {
+        // GPS is useful evidence metadata, but it must never prevent the photo itself
+        // from being saved when permission is denied or the device has no GPS fix.
+        if (navigator.geolocation && window.isSecureContext) {
+          try {
+            const position = await new Promise((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 8000,
+                maximumAge: 60000
               });
-
-
-
-
-              const item = plots[state.photoPlot].checklist.find(
-                c => c[0] === state.photoCategory
-              );
-              console.log("PHOTO CATEGORY:", state.photoCategory);
-              console.log("FOUND ITEM:", item);
-
-              if (item) {
-
-                item[1] = 'pending';
-
-                console.log(
-                  "UPDATED ITEM:",
-                  item
-                );
-
-              }
-
-              plots[state.photoPlot].timeline.unshift([
-                new Date().toLocaleString(),
-                `Evidence submitted for ${state.photoCategory}`
-              ]);
-
-              saveData();
-
-              hideLoading();
-
-              
-
-              renderPlotOverview();
-
-
-            }
-
-          },
-
-          error => {
-
-            alert(
-              "GPS Error: " +
-              error.message
-            );
-
+            });
+            gps = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              altitude: position.coords.altitude,
+              accuracy: position.coords.accuracy
+            };
+          } catch (gpsError) {
+            console.warn('PlotVault: GPS unavailable; saving evidence without location.', gpsError);
           }
+        }
 
-        );
+        if (!plotId) {
+          toast('Please select a plot before saving Part L evidence.');
+          return;
+        }
 
+        const plot = plots[plotId];
+        if (!plot || !Array.isArray(plot.gallery)) {
+          toast('The selected plot evidence area is unavailable.');
+          return;
+        }
+
+        const photo = {
+          id: 'photo_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+          project: projects[projectId].name,
+          plot: plot.number,
+          category,
+          image: state.photoImage,
+          capturedBy: appSettings.assessor || 'Not recorded',
+          colour: '#1F8A4C',
+          reviewStatus: 'pending',
+          latitude: gps.latitude,
+          longitude: gps.longitude,
+          altitude: gps.altitude,
+          accuracy: gps.accuracy,
+          notes,
+          timestamp: new Date().toLocaleString()
+        };
+
+        const checklistItem = Array.isArray(plot.checklist)
+          ? plot.checklist.find(item => Array.isArray(item) && item[0] === category)
+          : null;
+        const previousChecklistStatus = checklistItem ? checklistItem[1] : null;
+        const previousTimelineLength = Array.isArray(plot.timeline) ? plot.timeline.length : 0;
+
+        plot.gallery.unshift(photo);
+        if (checklistItem) checklistItem[1] = 'pending';
+        if (!Array.isArray(plot.timeline)) plot.timeline = [];
+        plot.timeline.unshift([photo.timestamp, 'Evidence submitted for ' + category]);
+
+        if (!saveData()) {
+          // Restore the in-memory state if the browser reports that persistence failed.
+          const photoIndex = plot.gallery.indexOf(photo);
+          if (photoIndex !== -1) plot.gallery.splice(photoIndex, 1);
+          if (checklistItem) checklistItem[1] = previousChecklistStatus;
+          plot.timeline.length = previousTimelineLength;
+          return;
+        }
+
+        state.photoLat = gps.latitude;
+        state.photoLng = gps.longitude;
+        state.photoAltitude = gps.altitude;
+        state.photoAccuracy = gps.accuracy;
+        const plotLabel = plot.number || 'Unassigned plot';
+        const savedSub = document.getElementById('saved-sub');
+        if (savedSub) savedSub.textContent = category + ' · ' + plotLabel + ' · ' + projects[projectId].name;
+        const notesInput = document.getElementById('notes-input');
+        if (notesInput) notesInput.value = '';
+
+        state.history = state.history.filter(s => !['camera', 'category', 'notes'].includes(s));
+        hideLoading();
+        go('photoreview');
+        if (!gps.latitude || !gps.longitude) {
+          toast('Evidence saved. GPS location was not available for this photo.');
+        } else {
+          toast('Evidence saved successfully.');
+        }
+        renderPlotOverview();
+      } catch (error) {
+        console.error('PlotVault evidence save failed', error);
+        toast('The evidence could not be saved. Please try again.');
+      } finally {
+        hideLoading();
+        state.photoSaveInProgress = false;
       }
-      console.log("GPS REQUESTED");
-
-      state.photoNotes = document.getElementById('notes-input').value;
-      console.log("PHOTO PLOT =", state.photoPlot);
-      const plotLbl = state.photoPlot ? plots[state.photoPlot].number : 'Unassigned plot';
-      document.getElementById('saved-sub').textContent = (state.photoCategory || 'Photo') + ' · ' + plotLbl + ' · ' + projects[state.photoProject].name;
-      document.getElementById('notes-input').value = '';
-
-     
-
-      go('photoreview');
-
-      state.history = state.history.filter(
-        s => !['camera', 'category', 'notes'].includes(s)
-      );
-
     }
 
 
