@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.52 – Plot Overview and Branding Fix</title>
+  <title>PlotVault v11.54 – Plot Overview Full-Height Layout</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -1373,7 +1373,7 @@
 
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
-<meta name="plotvault-version" content="v11.52">
+<meta name="plotvault-version" content="v11.54">
 
 <style id="plotvault-v1126-screen-corrections">
 /* v11.26 — Plot Overview: proportions based on the supplied iPhone reference */
@@ -3141,7 +3141,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
     }
 
-    const PLOTVAULT_VERSION = "11.52";
+    const PLOTVAULT_VERSION = '11.54';
     function saveData() {
       try {
         const payload = {
@@ -5454,6 +5454,199 @@ html, body { width:100%; max-width:100%; min-height:100%; overflow-x:hidden; }
   #screens > #screen-plotoverview .po23-link-icon { flex-basis:32px !important; width:32px !important; height:32px !important; }
 }
 </style>
+
+<style id="plotvault-v1154-final-layout">
+/* v11.54: one final layout authority, loaded after all legacy stylesheets. */
+html, body {
+  width:100% !important;
+  min-height:100% !important;
+  margin:0 !important;
+}
+body { min-height:100vh !important; min-height:100dvh !important; }
+body > #frame {
+  width:100% !important;
+  height:100vh !important;
+  height:100dvh !important;
+  min-height:0 !important;
+  max-height:100vh !important;
+  max-height:100dvh !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+#frame > #screens {
+  flex:1 1 0 !important;
+  min-height:0 !important;
+  height:0 !important;
+  position:relative !important;
+  overflow:hidden !important;
+}
+#screens > #screen-plotoverview {
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  max-height:none !important;
+  display:none !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+#screens > #screen-plotoverview.active { display:flex !important; }
+#screens > #screen-plotoverview > .topnav {
+  flex:0 0 52px !important;
+  height:52px !important;
+  min-height:52px !important;
+  padding:6px 14px !important;
+  box-sizing:border-box !important;
+}
+#screens > #screen-plotoverview > #po-body.screen-body {
+  display:block !important;
+  flex:1 1 0 !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:none !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:7px 12px !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+#screens > #screen-plotoverview > #po-body > .po23-wrap {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-rows:minmax(0,1.18fr) minmax(0,.58fr) minmax(0,1.08fr) repeat(3,minmax(0,.82fr)) auto !important;
+  align-content:stretch !important;
+  align-items:stretch !important;
+  justify-content:stretch !important;
+  gap:6px !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  box-sizing:border-box !important;
+}
+#screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-hero,
+#screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-camera,
+#screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-compliance,
+#screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-link-card {
+  min-height:0 !important;
+  max-height:none !important;
+  height:auto !important;
+  width:100% !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+#screens > #screen-plotoverview .po23-hero {
+  padding:clamp(9px,1.5vh,16px) 15px !important;
+  border-radius:14px !important;
+}
+#screens > #screen-plotoverview .po23-camera {
+  display:flex !important;
+  align-items:center !important;
+  padding:6px 12px !important;
+}
+#screens > #screen-plotoverview .po23-compliance {
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  padding:7px 10px !important;
+}
+#screens > #screen-plotoverview .po23-section-head { margin-bottom:5px !important; }
+#screens > #screen-plotoverview .po23-counts {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  gap:5px !important;
+}
+#screens > #screen-plotoverview .po23-count {
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  grid-template-rows:20px 19px 13px !important;
+  align-content:center !important;
+  justify-items:center !important;
+  align-items:center !important;
+  gap:1px !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  height:100% !important;
+  padding:2px !important;
+  text-align:center !important;
+}
+#screens > #screen-plotoverview .po23-count-icon { margin:0 auto !important; }
+#screens > #screen-plotoverview .po23-count strong,
+#screens > #screen-plotoverview .po23-count small {
+  display:block !important;
+  width:100% !important;
+  text-align:center !important;
+  line-height:1.1 !important;
+}
+#screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-link-card {
+  display:flex !important;
+  align-items:center !important;
+  padding:6px 10px !important;
+  gap:9px !important;
+  border-radius:11px !important;
+}
+#screens > #screen-plotoverview .po23-link-icon {
+  flex:0 0 34px !important;
+  width:34px !important;
+  height:34px !important;
+}
+#screens > #screen-plotoverview .po23-link-copy { flex:1 1 auto !important; min-width:0 !important; }
+#screens > #screen-plotoverview .po23-link-copy strong { font-size:13px !important; }
+#screens > #screen-plotoverview .po23-link-copy small { font-size:10px !important; }
+#screens > #screen-plotoverview > .po-delete-footer {
+  display:block !important;
+  position:relative !important;
+  flex:0 0 50px !important;
+  width:100% !important;
+  height:50px !important;
+  min-height:50px !important;
+  margin:0 !important;
+  padding:5px 12px !important;
+  background:#f3f6fa !important;
+  z-index:20 !important;
+  box-sizing:border-box !important;
+}
+#screens > #screen-plotoverview > .po-delete-footer > .btn {
+  display:block !important;
+  width:100% !important;
+  height:40px !important;
+  min-height:40px !important;
+  margin:0 !important;
+  padding:6px 12px !important;
+}
+#screens > #screen-plotoverview .po23-timeline-detail {
+  min-height:0 !important;
+  max-height:42px !important;
+  overflow:hidden !important;
+  padding:4px 8px !important;
+}
+@media (max-width:700px) {
+  #frame > #statusbar { flex:0 0 24px !important; height:24px !important; min-height:24px !important; }
+  #screens > #screen-plotoverview > .topnav { flex-basis:48px !important; height:48px !important; min-height:48px !important; }
+  #screens > #screen-plotoverview > .po-delete-footer {
+    flex-basis:calc(50px + env(safe-area-inset-bottom,0px)) !important;
+    height:calc(50px + env(safe-area-inset-bottom,0px)) !important;
+    min-height:calc(50px + env(safe-area-inset-bottom,0px)) !important;
+    padding-bottom:calc(5px + env(safe-area-inset-bottom,0px)) !important;
+  }
+  #screens > #screen-plotoverview > #po-body.screen-body { padding:6px 10px !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap { gap:5px !important; }
+}
+@media (max-height:700px) {
+  #screens > #screen-plotoverview > .topnav { flex-basis:44px !important; height:44px !important; min-height:44px !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap { gap:4px !important; }
+  #screens > #screen-plotoverview > .po-delete-footer { flex-basis:46px !important; height:46px !important; min-height:46px !important; }
+  #screens > #screen-plotoverview > .po-delete-footer > .btn { height:38px !important; min-height:38px !important; }
+}
+</style>
+
 </body>
 
 </html>
