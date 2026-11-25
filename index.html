@@ -4896,7 +4896,7 @@ return `
       win.document.open();
       win.document.write(safeHtml);
       win.document.close();
-      if (autoPrint) win.addEventListener('load', () => setTimeout(() => win.print(), 350), { once: true });
+      if (autoPrint) setTimeout(() => { try { win.print(); } catch (error) { console.error('Report print could not start', error); } }, 500);
       return true;
     }
 
@@ -4912,9 +4912,8 @@ return `
         return;
       }
       renderReports();
-      const win = window.open('', '_blank');
-      if (!win) { toast('Report saved to history. Allow pop-ups to open the print view.'); return; }
-      win.document.open(); win.document.write(record.html); win.document.close();
+      try { if (!pvOpenReportWindow(record.html, true)) toast('Report saved to history. Allow pop-ups to open the print view.'); }
+      catch (error) { console.error('Generated report could not be opened safely', error); toast('Report saved, but the print view could not be opened safely'); }
     }
     async function shareSavedReport(id) {
       const r = reportHistory.find(x => x.id === id); if (!r) return;
@@ -5002,6 +5001,7 @@ return `
           importedReports.forEach((report, index) => {
             if (!report || typeof report !== 'object' || Array.isArray(report)) throw new Error('Invalid report record');
             if (typeof report.html !== 'string') throw new Error('A saved report is missing its report document');
+            report.html = pvSanitizeReportHtml(report.html);
             if (!report.id) report.id = 'imported_report_' + index + '_' + Date.now();
           });
 
