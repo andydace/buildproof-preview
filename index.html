@@ -3798,6 +3798,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
       }
       const container = document.getElementById('plot-list');
+      if (!container) return;
       container.innerHTML = list.map(p => {
         const m =
           statusMeta(p.status || "In Progress");
@@ -3834,7 +3835,7 @@ return `
             color:var(--navy);
             line-height:1.1;
         ">
-            ${p.number}
+            ${escapeHTML(p.number)}
         </div>
 
         <div style="
@@ -3842,12 +3843,12 @@ return `
             color:var(--muted);
             margin-top:2px;
         ">
-            ${p.houseType || 'Detached House'}
+            ${escapeHTML(p.houseType || 'Detached House')}
         </div>
     </div>
 
     <span class="badge ${m.badge}">
-        ${m.text}
+        ${escapeHTML(m.text)}
     </span>
 
 </div>
