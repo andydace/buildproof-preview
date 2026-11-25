@@ -4097,96 +4097,59 @@ return `
     }
     function renderGallery() {
       const p = plots[state.plotId];
+      const galleryBody = document.querySelector('#screen-evidencegallery .screen-body');
+      if (!galleryBody) return;
+      if (!p) {
+        galleryBody.innerHTML = '<div class="empty-state">Select a plot to view its evidence.</div>';
+        return;
+      }
 
-      const photos = [...p.gallery].sort((a, b) =>
-        a.category.localeCompare(
-          b.category,
+      if (!Array.isArray(p.gallery)) p.gallery = [];
+      if (!Array.isArray(p.checklist)) p.checklist = [];
+      const project = projects[p.projectId] || { name: 'Project not recorded' };
+      const photos = p.gallery.filter(photo => photo && typeof photo === 'object').slice().sort((a, b) =>
+        String(a.category || 'Uncategorised').localeCompare(
+          String(b.category || 'Uncategorised'),
           undefined,
           { numeric: true }
         )
       );
-
-
-      const approved =
-        p.checklist.filter(i => i[1] === 'done').length;
-
-      const pending =
-        p.checklist.filter(i => i[1] === 'pending').length;
-
-      const missing =
-        p.checklist.filter(i => i[1] === 'missing').length;
-
+      const approved = p.checklist.filter(item => Array.isArray(item) && item[1] === 'done').length;
+      const pending = p.checklist.filter(item => Array.isArray(item) && item[1] === 'pending').length;
+      const missing = p.checklist.filter(item => Array.isArray(item) && (item[1] === 'missing' || item[1] === 'rejected')).length;
       const total = p.checklist.length;
+      const progress = total ? Math.round((approved / total) * 100) : 0;
 
-      const progress =
-        Math.round((approved / total) * 100);
-
-      document.getElementById('eg-sub').textContent = p.number + ' · ' + projects[p.projectId].name;
-
-      const galleryBody =
-        document.querySelector(
-          '#screen-evidencegallery .screen-body'
-        );
+      const sub = document.getElementById('eg-sub');
+      if (sub) sub.textContent = (p.number || 'Plot') + ' · ' + project.name;
 
       galleryBody.innerHTML = `
-<div style="
-    margin-bottom:14px;
-    padding:12px 14px;
-    background:#F4F6F8;
-    border-radius:12px;
-    font-size:14px;
-    font-weight:700;
-    color:var(--navy);
-">
-    ${p.gallery.length} of ${p.checklist.length} Compliance Items Captured
-</div>
-
-<div class="gallery-grid" id="gallery-grid"></div>
-`;
+        <div style="margin-bottom:14px;padding:12px 14px;background:#F4F6F8;border-radius:12px;font-size:14px;font-weight:700;color:var(--navy);">
+          ${p.gallery.length} of ${total} Compliance Items Captured
+        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>`;
       const grid = document.getElementById('gallery-grid');
-      grid.innerHTML = p.gallery.length ? photos.map((photo) => {
+      if (!grid) return;
+      grid.innerHTML = photos.length ? photos.map(photo => {
         const originalIndex = p.gallery.indexOf(photo);
-        const reviewStatus = photo.reviewStatus || 'pending';
+        const reviewStatus = ['approved', 'rejected', 'pending'].includes(photo.reviewStatus) ? photo.reviewStatus : 'pending';
         const statusLabel = reviewStatus === 'approved' ? 'APPROVED' : reviewStatus === 'rejected' ? 'RETAKE REQUIRED' : 'PENDING REVIEW';
-        return `<div class="gallery-thumb"
-    onclick="showEvidence(state.plotId, ${originalIndex})">
-
-    <img
-      src="${photo.image}"
-      style="
-        width:100%;
-        height:100%;
-        object-fit:cover;
-      ">
-
-    <div style="
-    position:absolute;
-    bottom:6px;
-    left:6px;
-    background:rgba(0,0,0,.65);
-    color:white;
-    padding:3px 8px;
-    border-radius:4px;
-    font-size:13px;
-    font-weight:700;
-">
-    ${photo.category.split(' - ')[0]}
-</div>
-<div class="gallery-review-badge ${reviewStatus}">${statusLabel}</div>
-</div>`;
-      }).join('') :
-
-        `<div class="empty-state" style="grid-column:1/-1;"><div class="ic">📷</div>No evidence captured yet.</div>`;
+        const image = typeof photo.image === 'string' && /^data:image\/(jpeg|png|webp);base64,/i.test(photo.image) ? photo.image : '';
+        const category = String(photo.category || 'Uncategorised');
+        return `<div class="gallery-thumb" onclick="showEvidence(state.plotId, ${originalIndex})">
+          ${image ? `<img src="${image}" alt="Evidence photo" style="width:100%;height:100%;object-fit:cover;">` : '<div class="empty-state">Image unavailable</div>'}
+          <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.65);color:white;padding:3px 8px;border-radius:4px;font-size:13px;font-weight:700;">${escapeHTML(category.split(' - ')[0])}</div>
+          <div class="gallery-review-badge ${reviewStatus}">${statusLabel}</div>
+        </div>`;
+      }).join('') : '<div class="empty-state" style="grid-column:1/-1;"><div class="ic">📷</div>No evidence captured yet.</div>';
     }
     function showEvidence(plotId, photoIndex) {
 
       const p = plots[plotId];
       const photo = p.gallery[photoIndex];
 
-      if (!photo || !photo.project) {
-        alert(
-          "This is an older photo record. Take a new photo to view evidence details."
-        );
+      if (!photo || typeof photo !== 'object') {
+        toast('This evidence photo could not be found.');
         return;
       }
       openEvidenceViewer(photo);
