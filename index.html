@@ -4412,7 +4412,6 @@ return `
       });
       container.innerHTML = list.map(p => `<div class="card tap" onclick="openPlot('${p.id}')"><div class="row"><span style="font-weight:800;color:var(--navy);">${p.number}</span><span class="badge ${statusMeta(p.status).badge}">${p.status}</span></div><div style="font-size:12.5px;color:var(--muted);margin-top:2px;">${p.houseType}</div></div>`).join('');
     }
-    function generateReportForPlot(id) { toast('PDF generated for ' + plots[id].number); }
 
     function updateDashboardStats() {
 
