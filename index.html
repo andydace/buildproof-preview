@@ -4782,7 +4782,7 @@ return `
     function buildReportDocument(plot) {
       const project = projects[plot.projectId] || {};
       const settings = appSettings;
-      const rows = (plot.checklist || []).map(([name,status]) => `<tr><td>${escapeHTML(name)}</td><td>${escapeHTML(status === 'done' ? 'Approved' : status === 'pending' ? 'Pending review' : 'Missing')}</td></tr>`).join('');
+      const rows = (plot.checklist || []).filter(item => Array.isArray(item)).map(([name,status]) => `<tr><td>${escapeHTML(name)}</td><td>${escapeHTML(status === 'done' ? 'Approved' : status === 'pending' ? 'Pending review' : 'Missing')}</td></tr>`).join('');
       const photos = (plot.gallery || []).filter(photo => photo && typeof photo.image === 'string' && /^data:image\/(jpeg|png|webp);base64,/i.test(photo.image)).map((photo,i) => {
         const captured = photo.timestamp || photo.date || 'Date not recorded';
         const hasGps = photo.latitude !== null && photo.latitude !== undefined && photo.longitude !== null && photo.longitude !== undefined && photo.latitude !== '' && photo.longitude !== '' && Number.isFinite(Number(photo.latitude)) && Number.isFinite(Number(photo.longitude));
@@ -4852,7 +4852,7 @@ return `
 
     function generatePlotReport(plotId) {
       const plot = plots[plotId]; if (!plot) return;
-      const items = plot.checklist || [];
+      const items = Array.isArray(plot.checklist) ? plot.checklist.filter(item => Array.isArray(item)) : [];
       const isDraft = !items.length || items.some(i => i[1] !== 'done');
       const project = projects[plot.projectId] || {};
       const record = { id:'report_'+Date.now(), plotId, projectId:plot.projectId, plotNumber:plot.number, projectName:project.name || '', sapAssessor:project.sapAssessor || '', sapAssessorEmail:project.sapAssessorEmail || '', generatedAt:new Date().toLocaleString('en-GB'), status:isDraft?'Draft':'Approved', html:buildReportDocument(plot) };
@@ -4866,24 +4866,30 @@ return `
       catch (error) { console.error('Generated report could not be opened safely', error); toast('Report saved, but the print view could not be opened safely'); }
     }
     async function shareSavedReport(id) {
-      const r = reportHistory.find(x => x.id === id); if (!r) return;
-      const project = projects[r.projectId] || {};
-      const recipient = r.sapAssessorEmail || project.sapAssessorEmail || '';
-      if (!recipient) { toast('Add the SAP Assessor email in Project Details → Edit first'); return; }
-      const safePlot = String(r.plotNumber || 'Plot').replace(/[^a-z0-9_-]+/gi, '-');
-      const safeHtml = pvSanitizeReportHtml(r.html);
-      const file = new File([safeHtml], `PlotVault-${safePlot}-Part-L-Report.html`, { type: 'text/html' });
-      const shareData = {
-        files: [file],
-        title: `PlotVault Part L Evidence Report – ${r.projectName} – ${r.plotNumber}`,
-        text: `To: ${recipient}\nHello ${r.sapAssessor || project.sapAssessor || 'SAP Assessor'},\n\nPlease find attached the PlotVault Part L evidence report.\nProject: ${r.projectName}\nPlot: ${r.plotNumber}\nGenerated: ${r.generatedAt}\n\nKind regards`
-      };
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        try { await navigator.share(shareData); }
-        catch (err) { if (err && err.name !== 'AbortError') toast('Unable to open the sharing options on this device'); }
-      } else {
-        downloadReportHTML(id);
-        toast('This browser cannot attach files to the share sheet. The report file has been downloaded instead.');
+      try {
+        const r = reportHistory.find(x => x && x.id === id);
+        if (!r) { toast('The saved report could not be found'); return; }
+        const project = projects[r.projectId] || {};
+        const recipient = r.sapAssessorEmail || project.sapAssessorEmail || '';
+        if (!recipient) { toast('Add the SAP Assessor email in Project Details → Edit first'); return; }
+        const safePlot = String(r.plotNumber || 'Plot').replace(/[^a-z0-9_-]+/gi, '-');
+        const safeHtml = pvSanitizeReportHtml(r.html);
+        const file = new File([safeHtml], `PlotVault-${safePlot}-Part-L-Report.html`, { type: 'text/html' });
+        const shareData = {
+          files: [file],
+          title: `PlotVault Part L Evidence Report – ${r.projectName || 'Project'} – ${r.plotNumber || 'Plot'}`,
+          text: `To: ${recipient}\nHello ${r.sapAssessor || project.sapAssessor || 'SAP Assessor'},\n\nPlease find attached the PlotVault Part L evidence report.\nProject: ${r.projectName || 'Project'}\nPlot: ${r.plotNumber || 'Plot'}\nGenerated: ${r.generatedAt || 'Date not recorded'}\n\nKind regards`
+        };
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share(shareData); }
+          catch (err) { if (err && err.name !== 'AbortError') toast('Unable to open the sharing options on this device'); }
+        } else {
+          downloadReportHTML(id);
+          toast('This browser cannot attach files to the share sheet. The report file has been downloaded instead.');
+        }
+      } catch (error) {
+        console.error('PlotVault report sharing failed', error);
+        toast('This report could not be prepared for sharing safely');
       }
     }
     function emailSavedReport(id) { shareSavedReport(id); }
@@ -4928,7 +4934,7 @@ return `
     }
     function exportBackup() {
       const payload={version:PLOTVAULT_VERSION,exportedAt:new Date().toISOString(),projects,plots,reportHistory,appSettings};
-      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='PlotVault-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('Backup downloaded');
+      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='PlotVault-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Backup downloaded');
     }
     function importBackup() {
       const input = document.getElementById('backup-file');
