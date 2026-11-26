@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.68 – Plot Overview Layout Correction</title>
+  <title>PlotVault v11.69 – Viewport Fit Correction</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -2631,7 +2631,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (overlay) overlay.style.display = 'none';
     }
 
-    const PLOTVAULT_VERSION = '11.68';
+    const PLOTVAULT_VERSION = '11.69';
     function saveData() {
       const keys = {
         projects: 'plotvaultProjects',
@@ -4929,6 +4929,10 @@ body>#frame{display:flex;flex-direction:column;position:relative;width:100%;max-
 
 <style id="plotvault-v1168-plot-layout-correction">
 /* v11.68: use a single flex column so the footer always has its own space */
+/* v11.69: remove the original 24px page padding that pushed the full-height app below the viewport */
+html,body{width:100%!important;height:100%!important;margin:0!important;padding:0!important;overflow:hidden!important}
+body{display:flex!important;align-items:stretch!important;justify-content:stretch!important;min-height:100dvh!important}
+
 #frame{height:100vh!important;height:100dvh!important;min-height:0!important;max-height:100dvh!important;padding:0!important;overflow:hidden!important}
 #frame>#statusbar{flex:0 0 24px!important;height:24px!important;min-height:24px!important}
 #frame>#screens{position:relative!important;flex:1 1 0!important;width:100%!important;height:0!important;min-height:0!important;overflow:hidden!important}
