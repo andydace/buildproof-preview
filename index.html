@@ -3611,11 +3611,17 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
           : null;
         const previousChecklistStatus = checklistItem ? checklistItem[1] : null;
         const previousTimelineLength = Array.isArray(plot.timeline) ? plot.timeline.length : 0;
+        const previousScore = plot.score;
+        const previousStatus = plot.status;
 
         plot.gallery.unshift(photo);
         if (checklistItem) checklistItem[1] = 'pending';
         if (!Array.isArray(plot.timeline)) plot.timeline = [];
         plot.timeline.unshift([photo.timestamp, 'Evidence submitted for ' + category]);
+        const validChecklist = Array.isArray(plot.checklist) ? plot.checklist.filter(item => Array.isArray(item)) : [];
+        const approvedCount = validChecklist.filter(item => item[1] === 'done').length;
+        plot.score = validChecklist.length ? Math.round((approvedCount / validChecklist.length) * 100) : 0;
+        plot.status = plot.score === 0 ? 'Not Started' : plot.score < 100 ? 'In Progress' : 'Complete';
 
         if (!saveData()) {
           // Restore the in-memory state if the browser reports that persistence failed.
@@ -3623,6 +3629,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
           if (photoIndex !== -1) plot.gallery.splice(photoIndex, 1);
           if (checklistItem) checklistItem[1] = previousChecklistStatus;
           plot.timeline.length = previousTimelineLength;
+          plot.score = previousScore;
+          plot.status = previousStatus;
           return;
         }
 
