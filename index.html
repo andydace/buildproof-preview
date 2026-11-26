@@ -3126,19 +3126,13 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
     let notifications = [];
     function showLoading() {
-
-      document.getElementById(
-        'loading-overlay'
-      ).style.display = 'flex';
-
+      const overlay = document.getElementById('loading-overlay');
+      if (overlay) overlay.style.display = 'flex';
     }
 
     function hideLoading() {
-
-      document.getElementById(
-        'loading-overlay'
-      ).style.display = 'none';
-
+      const overlay = document.getElementById('loading-overlay');
+      if (overlay) overlay.style.display = 'none';
     }
 
     const PLOTVAULT_VERSION = '11.54';
@@ -3303,10 +3297,10 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
 
     function go(screen, push = true) {
-      if (push && state.screen !== screen) state.history.push(state.screen);
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       const targetScreen = document.getElementById('screen-' + screen);
       if (!targetScreen) { console.error('PlotVault screen not found:', screen); toast('This screen is unavailable'); return; }
+      if (push && state.screen !== screen) state.history.push(state.screen);
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       targetScreen.classList.add('active');
       state.screen = screen;
       updateBottomNav(screen);
@@ -3323,7 +3317,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (screen === 'notifications') renderNotifications();
       if (screen === 'search') renderSearch(document.getElementById('global-search') ? document.getElementById('global-search').value : '');
       updateNotifBadges();
-      document.getElementById('screens').scrollTop = 0;
+      const screens = document.getElementById('screens');
+      if (screens) screens.scrollTop = 0;
       const el = document.getElementById('screen-' + screen);
       if (el) el.scrollTop = 0;
     }
@@ -3367,21 +3362,13 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (!projects[id]) { toast('Project not found'); return; }
       state.projectId = id;
 
-      const projectPlots =
-        Object.values(plots)
-          .filter(p => p.projectId === id);
-
-      document.getElementById('pd-name').textContent =
-        projects[id].name;
-
-      document.getElementById('pd-location').textContent =
-        projects[id].location || "Not set";
+      const put = (elementId, value) => { const el = document.getElementById(elementId); if (el) el.textContent = value; };
+      put('pd-name', projects[id].name || 'Untitled project');
+      put('pd-location', projects[id].location || 'Not set');
       const headingLocation = document.getElementById('pd-location-heading');
       if (headingLocation) headingLocation.textContent = projects[id].location || 'Location not set';
-      document.getElementById('pd-client').textContent =
-        projects[id].client || "Not set";
-
-      document.getElementById('pd-sitemanager').textContent = projects[id].siteManager || 'Not set';
+      put('pd-client', projects[id].client || 'Not set');
+      put('pd-sitemanager', projects[id].siteManager || 'Not set');
       const sapNameEl = document.getElementById('pd-sap-assessor'); if (sapNameEl) sapNameEl.textContent = projects[id].sapAssessor || 'Not set';
       const sapEmailEl = document.getElementById('pd-sap-email'); if (sapEmailEl) sapEmailEl.textContent = projects[id].sapAssessorEmail || 'Not set';
       const startDateEl = document.getElementById('pd-start-date'); if (startDateEl) startDateEl.textContent = projects[id].startDate || 'Not set';
@@ -3488,9 +3475,9 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       go('camera');
     }
     function capturePhoto() {
-
-      document.getElementById('photo-input').click();
-
+      const input = document.getElementById('photo-input');
+      if (input) input.click();
+      else toast('The camera upload control is unavailable');
     }
     function photoSelected(event) {
       const input = event && event.target;
@@ -5020,6 +5007,7 @@ return `
     let toastTimer;
     function toast(msg) {
       const t = document.getElementById('toast');
+      if (!t) { console.warn('PlotVault notification:', msg); return; }
       t.textContent = msg;
       t.classList.add('show');
       clearTimeout(toastTimer);
