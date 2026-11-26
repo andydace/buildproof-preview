@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.79 – Branded Projects Header</title>
+  <title>PlotVault v11.80 – Compact Branded Projects Header</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -5549,6 +5549,30 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
  #frame>#screen-projects>.pv-projects-brandbar{flex-basis:70px!important;height:70px!important;min-height:70px!important;padding:8px 14px!important}
  #frame>#screen-projects .pv-header-logo{width:130px!important;height:34px!important}
  #frame>#screen-projects .pv-brand-tagline{font-size:7px!important;letter-spacing:1.35px!important}
+}
+
+
+/* v11.80: compact branded Projects header */
+#frame>#screen-projects>.pv-projects-brandbar{
+  flex:0 0 48px!important;height:48px!important;min-height:48px!important;
+  padding:4px 14px!important;
+}
+#frame>#screen-projects .pv-header-logo{
+  width:116px!important;height:30px!important;max-width:52vw!important;
+}
+#frame>#screen-projects .pv-brand-lockup{gap:0!important}
+#frame>#screen-projects .pv-brand-tagline{
+  font-size:7px!important;letter-spacing:1.15px!important;
+}
+#frame>#screen-projects .pv-header-accent{display:none!important}
+#frame>#screen-projects>.screen-body{padding-top:7px!important}
+@media(max-width:390px){
+  #frame>#screen-projects>.pv-projects-brandbar{
+    flex-basis:46px!important;height:46px!important;min-height:46px!important;
+    padding:3px 12px!important;
+  }
+  #frame>#screen-projects .pv-header-logo{width:108px!important;height:28px!important}
+  #frame>#screen-projects .pv-brand-tagline{font-size:6.5px!important;letter-spacing:1px!important}
 }
 
 </style>
