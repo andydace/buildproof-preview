@@ -3479,82 +3479,46 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
     }
     function photoSelected(event) {
+      const input = event && event.target;
+      const file = input && input.files && input.files[0];
+      if (!file) return;
+      if (!/^image\//i.test(file.type || '')) { toast('Please choose an image file'); input.value = ''; return; }
+      if (file.size > 15 * 1024 * 1024) { toast('Please choose a photo smaller than 15 MB'); input.value = ''; return; }
+      if (!projects[state.photoProject]) { toast('The selected project could not be found'); input.value = ''; return; }
+      if (state.photoPlot && !plots[state.photoPlot]) { toast('The selected plot could not be found'); input.value = ''; return; }
 
-      const file = event.target.files[0];
-
-      if (!file) {
-        return;
-      }
-
+      state.photoImage = null;
       const reader = new FileReader();
-
-      reader.onload = function (e) {
-
+      reader.onerror = () => { toast('The photo could not be read. Please try again.'); input.value = ''; };
+      reader.onload = event => {
         const img = new Image();
-
-        img.onload = function () {
-
-          const canvas = document.createElement("canvas");
-
-          const maxWidth = 800;
-
-          const scale =
-            maxWidth / img.width;
-
-          canvas.width = maxWidth;
-          canvas.height =
-            img.height * scale;
-
-          const ctx =
-            canvas.getContext("2d");
-
-          ctx.drawImage(
-            img,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-
-          state.photoImage =
-            canvas.toDataURL(
-              "image/jpeg",
-              0.7
-            );
-
+        img.onerror = () => { toast('This photo format could not be opened on this device'); input.value = ''; };
+        img.onload = () => {
+          try {
+            const maxWidth = 1200;
+            const scale = Math.min(1, maxWidth / img.width);
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('Photo canvas is unavailable');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            state.photoImage = canvas.toDataURL('image/jpeg', 0.78);
+            const subtitle = document.getElementById('cat-sub');
+            if (subtitle) subtitle.textContent = (state.photoPlot ? (plots[state.photoPlot].number || 'Plot') + ' • ' : '') + (projects[state.photoProject].name || 'Project');
+            document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.toggle('selected', !!state.photoCategory && chip.textContent.trim() === state.photoCategory));
+            go('category');
+          } catch (error) {
+            state.photoImage = null;
+            console.error('PlotVault photo processing failed', error);
+            toast('The photo could not be prepared. Please try another image.');
+          } finally {
+            input.value = '';
+          }
         };
-
-        img.src = e.target.result;
-
-
-        document.getElementById('cat-sub').textContent =
-          (state.photoPlot
-            ? plots[state.photoPlot].number + ' • '
-            : '') +
-          projects[state.photoProject].name;
-
-        document.querySelectorAll('.cat-chip')
-          .forEach(c => c.classList.remove('selected'));
-
-        if (state.photoCategory) {
-
-          document.querySelectorAll('.cat-chip')
-            .forEach(c => {
-
-              if (c.textContent.trim() === state.photoCategory) {
-                c.classList.add('selected');
-              }
-
-            });
-
-        }
-
-        go('category');
-
+        img.src = event.target.result;
       };
-
       reader.readAsDataURL(file);
-
     }
 
     function pickCategory(el, name) {
@@ -4801,19 +4765,27 @@ return `
       if (typeof html !== 'string' || !html.trim()) throw new Error('Saved report is empty or invalid');
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-      doc.querySelectorAll('script, iframe, object, embed, form, base, meta[http-equiv]').forEach(node => node.remove());
+      doc.querySelectorAll('script, iframe, object, embed, form, base, meta[http-equiv], link[rel~="stylesheet"], svg, math').forEach(node => node.remove());
+      doc.querySelectorAll('style').forEach(node => {
+        node.textContent = node.textContent
+          .replace(/@import[^;]*;?/gi, '')
+          .replace(/url\s*\([^)]*\)/gi, 'none');
+      });
       doc.querySelectorAll('*').forEach(node => {
         [...node.attributes].forEach(attr => {
           const name = attr.name.toLowerCase();
           const value = String(attr.value || '').trim();
-          if (name.startsWith('on') || name === 'srcdoc' ||
+          if (name.startsWith('on') || name === 'srcdoc' || name === 'srcset' ||
+              (name === 'style' && /@import|url\s*\(/i.test(value)) ||
+              (name === 'href' && value && !/^#[\w-]*$/.test(value)) ||
+              (name === 'src' && !/^data:image\/(jpeg|png|webp);base64,/i.test(value)) ||
               ((name === 'href' || name === 'src' || name === 'xlink:href' || name === 'action' || name === 'formaction') &&
-               /^\\s*(javascript|vbscript):/i.test(value))) {
+               /^\s*(javascript|vbscript|data:text\/html):/i.test(value))) {
             node.removeAttribute(attr.name);
           }
         });
       });
-      return '<!doctype html>\\n' + doc.documentElement.outerHTML;
+      return '<!doctype html>\n' + doc.documentElement.outerHTML;
     }
 
     function pvOpenReportWindow(html, autoPrint = true) {
@@ -4848,7 +4820,8 @@ return `
       const recipient = r.sapAssessorEmail || project.sapAssessorEmail || '';
       if (!recipient) { toast('Add the SAP Assessor email in Project Details → Edit first'); return; }
       const safePlot = String(r.plotNumber || 'Plot').replace(/[^a-z0-9_-]+/gi, '-');
-      const file = new File([r.html], `PlotVault-${safePlot}-Part-L-Report.html`, { type: 'text/html' });
+      const safeHtml = pvSanitizeReportHtml(r.html);
+      const file = new File([safeHtml], `PlotVault-${safePlot}-Part-L-Report.html`, { type: 'text/html' });
       const shareData = {
         files: [file],
         title: `PlotVault Part L Evidence Report – ${r.projectName} – ${r.plotNumber}`,
@@ -4864,7 +4837,23 @@ return `
     }
     function emailSavedReport(id) { shareSavedReport(id); }
     function openSavedReport(id) { const r=reportHistory.find(x=>x.id===id); if(!r)return; try { if(!pvOpenReportWindow(r.html,true)) toast('Allow pop-ups to open the report'); } catch(error) { console.error('Saved report could not be opened safely',error); toast('This saved report is invalid or unsafe to open'); } }
-    function downloadReportHTML(id) { const r=reportHistory.find(x=>x.id===id); if(!r)return; const blob=new Blob([r.html],{type:'text/html'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=`PlotVault-${String(r.plotNumber).replace(/\W+/g,'-')}-Part-L-Report.html`;a.click();URL.revokeObjectURL(url); }
+    function downloadReportHTML(id) {
+      const r = reportHistory.find(x => x.id === id);
+      if (!r) return;
+      try {
+        const safeHtml = pvSanitizeReportHtml(r.html);
+        const blob = new Blob([safeHtml], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PlotVault-${String(r.plotNumber || 'Plot').replace(/\W+/g, '-')}-Part-L-Report.html`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (error) {
+        console.error('Report download failed', error);
+        toast('This saved report could not be downloaded safely');
+      }
+    }
     function renderSettings() {
       const fields = {'setting-assessor':'assessor','setting-role':'role','setting-email':'email','setting-company':'company','setting-address':'address','setting-phone':'phone','setting-company-email':'companyEmail','setting-report-footer':'reportFooter'};
       Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el && document.activeElement!==el)el.value=appSettings[key]||'';});
