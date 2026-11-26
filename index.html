@@ -3316,7 +3316,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (screen === 'reports') renderReports();
       if (screen === 'settings') renderSettings();
 
-      console.log("Dashboard loaded");
       if (screen === 'projectdetails') renderPlotList();
       if (screen === 'checklist') renderChecklist();
       if (screen === 'evidencegallery') renderGallery();
@@ -3372,16 +3371,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
         Object.values(plots)
           .filter(p => p.projectId === id);
 
-      const progress =
-        projectPlots.length
-          ? Math.round(
-            projectPlots.reduce(
-              (total, plot) => total + plot.score,
-              0
-            ) / projectPlots.length
-          )
-          : 0;
-
       document.getElementById('pd-name').textContent =
         projects[id].name;
 
@@ -3398,7 +3387,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       const startDateEl = document.getElementById('pd-start-date'); if (startDateEl) startDateEl.textContent = projects[id].startDate || 'Not set';
       const targetDateEl = document.getElementById('pd-target-date'); if (targetDateEl) targetDateEl.textContent = projects[id].targetDate || 'Not set';
 
-      console.log(projects[id]);
       go('projectdetails');
       renderPlotList();
     }
