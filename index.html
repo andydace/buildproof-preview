@@ -3683,6 +3683,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
           });
       list.forEach(plot => {
         if (!Array.isArray(plot.checklist)) plot.checklist = [];
+        else plot.checklist = plot.checklist.filter(item => Array.isArray(item));
       });
       const progress =
         list.length
@@ -3944,6 +3945,8 @@ return `
       if (!Array.isArray(p.checklist) || p.checklist.length === 0) {
         p.checklist = PARTL_ITEMS.map(name => [name, 'missing']);
         saveData();
+      } else {
+        p.checklist = p.checklist.filter(item => Array.isArray(item));
       }
 
       const approved = p.checklist.filter(i => i[1] === 'done').length;
@@ -4466,16 +4469,23 @@ return `
     }
 
     function updateProjectStats() {
-      const projectList = Object.values(projects);
-      const plotList = Object.values(plots);
-      const totalPlots = plotList.length;
-      const completedPlots = plotList.filter(p => (p.checklist || []).length && p.checklist.every(i => i[1] === 'done')).length;
-      const totalItems = plotList.reduce((n,p)=>n+(p.checklist||[]).length,0);
-      const approvedItems = plotList.reduce((n,p)=>n+(p.checklist||[]).filter(i=>i[1]==='done').length,0);
-      const compliance = totalItems ? Math.round(approvedItems/totalItems*100) : 0;
-      const values = {'projects-total':projectList.length,'plots-total':totalPlots,'completed-total':completedPlots,'compliance-total':compliance+'%'};
+      const projectList = Object.values(projects).filter(Boolean);
+      const plotList = Object.values(plots).filter(plot => plot && typeof plot === 'object');
+      const checklistFor = plot => Array.isArray(plot.checklist) ? plot.checklist.filter(item => Array.isArray(item)) : [];
+      const completedPlots = plotList.filter(plot => checklistFor(plot).length && checklistFor(plot).every(item => item[1] === 'done')).length;
+      const totalItems = plotList.reduce((total, plot) => total + checklistFor(plot).length, 0);
+      const approvedItems = plotList.reduce((total, plot) => total + checklistFor(plot).filter(item => item[1] === 'done').length, 0);
+      const compliance = totalItems ? Math.round(approvedItems / totalItems * 100) : 0;
+      const values = {'projects-total':projectList.length,'plots-total':plotList.length,'completed-total':completedPlots,'compliance-total':compliance+'%'};
       Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});
-      projectList.forEach(pr=>{const pp=plotList.filter(p=>p.projectId===pr.id);pr.plots=pp.length;pr.completion=pp.length?Math.round(pp.reduce((a,p)=>a+(Number(p.score)||0),0)/pp.length):0;const n=pp.reduce((a,p)=>a+(p.checklist||[]).length,0);const done=pp.reduce((a,p)=>a+(p.checklist||[]).filter(i=>i[1]==='done').length,0);pr.compliance=n?Math.round(done/n*100):0;});
+      projectList.forEach(project => {
+        const projectPlots = plotList.filter(plot => plot.projectId === project.id);
+        project.plots = projectPlots.length;
+        project.completion = projectPlots.length ? Math.round(projectPlots.reduce((total, plot) => total + (Number(plot.score) || 0), 0) / projectPlots.length) : 0;
+        const count = projectPlots.reduce((total, plot) => total + checklistFor(plot).length, 0);
+        const done = projectPlots.reduce((total, plot) => total + checklistFor(plot).filter(item => item[1] === 'done').length, 0);
+        project.compliance = count ? Math.round(done / count * 100) : 0;
+      });
     }
 
     function renderProjects() {
@@ -4720,7 +4730,7 @@ return `
       if (!eligible || !history) return;
       const allPlots = Object.values(plots);
       eligible.innerHTML = allPlots.length ? allPlots.map(p => {
-        const items = Array.isArray(p.checklist) ? p.checklist : [];
+        const items = Array.isArray(p.checklist) ? p.checklist.filter(i => Array.isArray(i)) : [];
         const approved = items.filter(i => i[1] === 'done').length;
         const ready = items.length > 0 && approved === items.length;
         const project = projects[p.projectId] || {name:'Unknown project'};
