@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.77 – Projects Screen Glass Redesign</title>
+  <title>PlotVault v11.78 – Unified Glass Design System</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -2631,7 +2631,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (overlay) overlay.style.display = 'none';
     }
 
-    const PLOTVAULT_VERSION = '11.77';
+    const PLOTVAULT_VERSION = '11.78';
     function saveData() {
       const keys = {
         projects: 'plotvaultProjects',
@@ -5443,6 +5443,97 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
  #frame>#screen-projects .project-card-image{width:78px!important;flex-basis:78px!important}
  #frame>#screen-projects .project-stat strong{font-size:19px!important}
 }
+
+/* v11.78: unify Projects with the approved Plot Overview glass language */
+:root{
+  --pv-glass-surface:linear-gradient(135deg,rgba(255,255,255,.66),rgba(229,242,252,.42));
+  --pv-glass-border:rgba(255,255,255,.96);
+  --pv-glass-shadow:0 12px 25px rgba(34,76,110,.16),0 3px 7px rgba(34,76,110,.08),inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(91,142,178,.15);
+  --pv-glass-highlight:linear-gradient(112deg,rgba(255,255,255,.58) 0%,rgba(255,255,255,.23) 18%,rgba(255,255,255,.05) 42%,transparent 58%),linear-gradient(180deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,.08) 22%,transparent 48%,rgba(31,76,112,.045) 100%);
+  --pv-page-background:radial-gradient(ellipse at 10% 12%,rgba(108,183,224,.34),transparent 43%),radial-gradient(ellipse at 92% 75%,rgba(89,151,196,.24),transparent 46%),linear-gradient(145deg,#e5f0f8 0%,#dce9f3 52%,#edf4f9 100%);
+}
+#frame>#screen-projects>.topnav{
+  flex:0 0 46px!important;height:46px!important;min-height:46px!important;
+  padding:3px 12px!important;
+  background:linear-gradient(120deg,rgba(255,255,255,.90),rgba(233,244,251,.78))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(160%)!important;
+  backdrop-filter:blur(18px) saturate(160%)!important;
+  border-bottom:1px solid rgba(255,255,255,.85)!important;
+  box-shadow:0 4px 14px rgba(36,76,108,.07)!important;
+}
+#frame>#screen-projects>.topnav .topnav-title h1{
+  font-size:17px!important;font-weight:850!important;line-height:1.05!important;
+  color:#173b56!important;letter-spacing:-.25px!important;
+}
+#frame>#screen-projects>.topnav .topnav-title>div{
+  font-size:10px!important;font-weight:650!important;letter-spacing:.15px!important;
+  color:#668096!important;margin-top:3px!important;
+}
+#frame>#screen-projects>.screen-body{
+  padding:7px 8px 18px!important;
+  background:var(--pv-page-background)!important;
+}
+#frame>#screen-projects .project-stat,
+#frame>#screen-projects .project-searchbox,
+#frame>#screen-projects .project-filter,
+#frame>#screen-projects .project-card{
+  border:1px solid var(--pv-glass-border)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(180%)!important;
+  backdrop-filter:blur(22px) saturate(180%)!important;
+}
+#frame>#screen-projects .project-stat{
+  position:relative!important;overflow:hidden!important;isolation:isolate!important;
+  background:var(--pv-glass-surface)!important;
+  box-shadow:var(--pv-glass-shadow)!important;
+}
+#frame>#screen-projects .project-stat:before,
+#frame>#screen-projects .project-searchbox:before,
+#frame>#screen-projects .project-filter:before{
+  content:""!important;position:absolute!important;inset:0!important;
+  pointer-events:none!important;border-radius:inherit!important;
+  background:var(--pv-glass-highlight)!important;
+}
+#frame>#screen-projects .project-stat>*,
+#frame>#screen-projects .project-searchbox>*,
+#frame>#screen-projects .project-filter>*{position:relative!important;z-index:1!important}
+#frame>#screen-projects .project-stat strong{color:#173b56!important}
+#frame>#screen-projects .project-stat span{color:#657f94!important}
+#frame>#screen-projects .project-searchbox{
+  position:relative!important;overflow:hidden!important;isolation:isolate!important;
+  background:var(--pv-glass-surface)!important;box-shadow:var(--pv-glass-shadow)!important;
+}
+#frame>#screen-projects .project-searchbox input{position:relative!important;z-index:1!important}
+#frame>#screen-projects .project-filter{
+  position:relative!important;overflow:hidden!important;isolation:isolate!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.60),rgba(229,242,252,.36))!important;
+  box-shadow:0 7px 16px rgba(34,76,110,.10),inset 0 1px 0 rgba(255,255,255,.98)!important;
+}
+#frame>#screen-projects .project-filter.active{
+  background:linear-gradient(110deg,#12476b 0%,#176f91 100%)!important;
+  color:#fff!important;border-color:rgba(255,255,255,.72)!important;
+  box-shadow:0 9px 18px rgba(16,78,115,.20),inset 0 1px 0 rgba(255,255,255,.30)!important;
+}
+#frame>#screen-projects .project-card{
+  background:var(--pv-glass-surface)!important;
+  box-shadow:var(--pv-glass-shadow)!important;
+}
+#frame>#screen-projects .project-card:before{
+  background:var(--pv-glass-highlight)!important;
+}
+#frame>#screen-projects .project-card:after{
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.98) 22%,rgba(255,255,255,.98) 78%,transparent)!important;
+  box-shadow:0 1px 5px rgba(255,255,255,.48)!important;
+}
+#frame>#screen-projects .project-card-name{color:#183b57!important}
+#frame>#screen-projects .project-card-metric strong{color:#17618f!important}
+#frame>#screen-projects .project-card-progress span{
+  background:linear-gradient(90deg,#53b7df,#176f91)!important;
+  box-shadow:0 0 8px rgba(36,137,190,.34)!important;
+}
+@media(max-width:390px){
+  #frame>#screen-projects>.topnav{flex-basis:43px!important;height:43px!important;min-height:43px!important}
+}
+
 </style>
 
 </body>
