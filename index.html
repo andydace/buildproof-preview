@@ -1373,7 +1373,7 @@
 
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
-<meta name="plotvault-version" content="v11.61">
+<meta name="plotvault-version" content="v11.63">
 
 <style id="plotvault-v1126-screen-corrections">
 /* v11.26 — Plot Overview: proportions based on the supplied iPhone reference */
@@ -4455,37 +4455,6 @@ input:focus,textarea:focus,select:focus {
 </style>
 
 
-<style id="plotvault-v1162-plot-overview-clean-layout">
-/* v11.62: consolidated Plot Overview layout. This is the sole layout authority for this screen. */
-html,body{width:100%;height:100%;min-height:0;margin:0;padding:0}
-body{display:flex;align-items:stretch;justify-content:center;overflow:hidden}
-body>#frame{display:flex;flex-direction:column;position:relative;width:100%;max-width:none;height:100vh;height:100dvh;min-height:0;max-height:100dvh;margin:0;padding:0;overflow:hidden;border-radius:0;box-sizing:border-box}
-#frame>#statusbar{flex:0 0 24px;height:24px;min-height:24px}
-#frame>#screens{position:relative;flex:1 1 0;width:100%;height:0;min-height:0;overflow:hidden}
-#frame>#bottomnav{position:relative;flex:0 0 64px;width:100%;height:64px;min-height:64px;left:auto;bottom:auto;transform:none;z-index:10}
-#screens>#screen-plotoverview{position:absolute;inset:0;display:none;flex-direction:column;width:100%;height:100%;min-height:0;max-height:none;margin:0;padding:0;overflow:hidden;box-sizing:border-box;background:#f3f6fa}
-#screens>#screen-plotoverview.active{display:flex}
-#screens>#screen-plotoverview>.topnav{position:relative;flex:0 0 48px;width:100%;height:48px;min-height:48px;margin:0;padding:4px 12px;box-sizing:border-box}
-#screens>#screen-plotoverview>#po-body.screen-body{display:block;flex:1 1 0;width:100%;height:0;min-height:0;max-height:none;margin:0;padding:5px 8px;overflow:hidden;box-sizing:border-box}
-#screens>#screen-plotoverview>#po-body>.po23-wrap{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.2fr) minmax(0,.55fr) minmax(0,1fr) repeat(3,minmax(0,.78fr));grid-auto-rows:minmax(0,.5fr);gap:5px;align-content:stretch;align-items:stretch;justify-content:stretch;width:100%;height:100%;min-height:0;max-height:none;margin:0;padding:0;box-sizing:border-box}
-#screens>#screen-plotoverview>#po-body>.po23-wrap:has(>.po23-timeline-detail){grid-template-rows:minmax(0,1.02fr) minmax(0,.48fr) minmax(0,.88fr) repeat(3,minmax(0,.68fr)) minmax(0,.55fr)}
-#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-timeline-detail{width:100%;height:100%;min-width:0;min-height:0;max-height:none;margin:0;align-self:stretch;justify-self:stretch;box-sizing:border-box;overflow:hidden}
-#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero{position:relative;display:block;padding:8px 12px}
-#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{display:flex;align-items:center;padding:4px 10px}
-#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance{display:flex;flex-direction:column;justify-content:center;padding:5px 8px}
-#screens>#screen-plotoverview .po23-section-head{margin-bottom:5px}
-#screens>#screen-plotoverview .po23-counts{display:grid;flex:1 1 auto;width:100%;min-height:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
-#screens>#screen-plotoverview .po23-count{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0;margin:0;padding:3px;box-sizing:border-box}
-#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card{display:flex;align-items:center;padding:5px 9px;gap:8px}
-#screens>#screen-plotoverview .po23-link-icon{flex:0 0 32px;width:32px;height:32px}
-#screens>#screen-plotoverview .po23-link-copy{flex:1 1 auto;min-width:0}
-#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-timeline-detail{display:block;padding:5px 8px;overflow:auto}
-#screens>#screen-plotoverview>.po-delete-footer{display:flex;flex:0 0 50px;align-items:center;position:relative;width:100%;height:50px;min-height:50px;max-height:50px;margin:0;padding:4px 8px;background:#f3f6fa;box-sizing:border-box;z-index:5}
-#screens>#screen-plotoverview>.po-delete-footer>.btn{display:block;width:100%;height:40px;min-height:40px;margin:0;padding:6px 12px}
-@media screen and (max-height:740px){#screens>#screen-plotoverview>.topnav{flex-basis:44px;height:44px;min-height:44px}#screens>#screen-plotoverview>.po-delete-footer{flex-basis:46px;height:46px;min-height:46px;max-height:46px}#screens>#screen-plotoverview>.po-delete-footer>.btn{height:38px;min-height:38px}#screens>#screen-plotoverview>#po-body>.po23-wrap{gap:4px}}
-@media screen and (max-width:390px){#screens>#screen-plotoverview>#po-body.screen-body{padding:4px 6px}#screens>#screen-plotoverview>#po-body>.po23-wrap{gap:4px}}
-</style>
-
 </body></html>`;
     }
     function pvSanitizeReportHtml(html) {
@@ -4728,7 +4697,36 @@ body>#frame{display:flex;flex-direction:column;position:relative;width:100%;max-
     go = function (...args) { _origGo(...args); enhanceKeyboardAccess(); };
   </script>
 
-<style id="plotvault-v1144-plot-screen-balanced-fit"></style>
+<style id="plotvault-v1162-plot-overview-clean-layout">
+/* v11.62: consolidated Plot Overview layout. This is the sole layout authority for this screen. */
+html,body{width:100%;height:100%;min-height:0;margin:0;padding:0}
+body{display:flex;align-items:stretch;justify-content:center;overflow:hidden}
+body>#frame{display:flex;flex-direction:column;position:relative;width:100%;max-width:none;height:100vh;height:100dvh;min-height:0;max-height:100dvh;margin:0;padding:0;overflow:hidden;border-radius:0;box-sizing:border-box}
+#frame>#statusbar{flex:0 0 24px;height:24px;min-height:24px}
+#frame>#screens{position:relative;flex:1 1 0;width:100%;height:0;min-height:0;overflow:hidden}
+#frame>#bottomnav{position:relative;flex:0 0 64px;width:100%;height:64px;min-height:64px;left:auto;bottom:auto;transform:none;z-index:10}
+#screens>#screen-plotoverview{position:absolute;inset:0;display:none;flex-direction:column;width:100%;height:100%;min-height:0;max-height:none;margin:0;padding:0;overflow:hidden;box-sizing:border-box;background:#f3f6fa}
+#screens>#screen-plotoverview.active{display:flex}
+#screens>#screen-plotoverview>.topnav{position:relative;flex:0 0 48px;width:100%;height:48px;min-height:48px;margin:0;padding:4px 12px;box-sizing:border-box}
+#screens>#screen-plotoverview>#po-body.screen-body{display:block;flex:1 1 0;width:100%;height:0;min-height:0;max-height:none;margin:0;padding:5px 8px;overflow:hidden;box-sizing:border-box}
+#screens>#screen-plotoverview>#po-body>.po23-wrap{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.2fr) minmax(0,.55fr) minmax(0,1fr) repeat(3,minmax(0,.78fr));grid-auto-rows:minmax(0,.5fr);gap:5px;align-content:stretch;align-items:stretch;justify-content:stretch;width:100%;height:100%;min-height:0;max-height:none;margin:0;padding:0;box-sizing:border-box}
+#screens>#screen-plotoverview>#po-body>.po23-wrap:has(>.po23-timeline-detail){grid-template-rows:minmax(0,1.02fr) minmax(0,.48fr) minmax(0,.88fr) repeat(3,minmax(0,.68fr)) minmax(0,.55fr)}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card,#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-timeline-detail{width:100%;height:100%;min-width:0;min-height:0;max-height:none;margin:0;align-self:stretch;justify-self:stretch;box-sizing:border-box;overflow:hidden}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero{position:relative;display:block;padding:8px 12px}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{display:flex;align-items:center;padding:4px 10px}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance{display:flex;flex-direction:column;justify-content:center;padding:5px 8px}
+#screens>#screen-plotoverview .po23-section-head{margin-bottom:5px}
+#screens>#screen-plotoverview .po23-counts{display:grid;flex:1 1 auto;width:100%;min-height:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+#screens>#screen-plotoverview .po23-count{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0;margin:0;padding:3px;box-sizing:border-box}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card{display:flex;align-items:center;padding:5px 9px;gap:8px}
+#screens>#screen-plotoverview .po23-link-icon{flex:0 0 32px;width:32px;height:32px}
+#screens>#screen-plotoverview .po23-link-copy{flex:1 1 auto;min-width:0}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-timeline-detail{display:block;padding:5px 8px;overflow:auto}
+#screens>#screen-plotoverview>.po-delete-footer{display:flex;flex:0 0 50px;align-items:center;position:relative;width:100%;height:50px;min-height:50px;max-height:50px;margin:0;padding:4px 8px;background:#f3f6fa;box-sizing:border-box;z-index:5}
+#screens>#screen-plotoverview>.po-delete-footer>.btn{display:block;width:100%;height:40px;min-height:40px;margin:0;padding:6px 12px}
+@media screen and (max-height:740px){#screens>#screen-plotoverview>.topnav{flex-basis:44px;height:44px;min-height:44px}#screens>#screen-plotoverview>.po-delete-footer{flex-basis:46px;height:46px;min-height:46px;max-height:46px}#screens>#screen-plotoverview>.po-delete-footer>.btn{height:38px;min-height:38px}#screens>#screen-plotoverview>#po-body>.po23-wrap{gap:4px}}
+@media screen and (max-width:390px){#screens>#screen-plotoverview>#po-body.screen-body{padding:4px 6px}#screens>#screen-plotoverview>#po-body>.po23-wrap{gap:4px}}
+</style>
 
 </body>
 
