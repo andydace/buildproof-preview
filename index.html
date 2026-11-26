@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.59 – Plot Overview Layout Preview</title>
+  <title>PlotVault v11.60 – Plot Overview Layout Preview</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -5872,6 +5872,35 @@ body > #frame {
 }
 </style>
 
+<style id="plotvault-v1160-final-cascade">
+/* v11.60: final cascade override. This must remain the last app stylesheet:
+   older style blocks in the document were overriding the earlier fixes. */
+@media screen and (max-width:700px) {
+  html, body { width:100% !important; height:100% !important; min-height:0 !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
+  body { display:block !important; }
+  #frame { display:flex !important; flex-direction:column !important; position:relative !important; width:100% !important; max-width:none !important; height:100vh !important; height:100dvh !important; min-height:0 !important; max-height:100dvh !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
+  #frame > #statusbar { flex:0 0 24px !important; height:24px !important; min-height:24px !important; }
+  #frame > #screens { position:relative !important; flex:1 1 0% !important; width:100% !important; height:0 !important; min-height:0 !important; overflow:hidden !important; }
+  #screens > #screen-plotoverview { position:absolute !important; inset:0 !important; display:none !important; flex-direction:column !important; width:100% !important; height:100% !important; min-height:0 !important; max-height:none !important; margin:0 !important; padding:0 !important; overflow:hidden !important; box-sizing:border-box !important; }
+  #screens > #screen-plotoverview.active { display:flex !important; }
+  #screens > #screen-plotoverview > .topnav { position:relative !important; top:auto !important; flex:0 0 48px !important; height:48px !important; min-height:48px !important; margin:0 !important; padding:4px 12px !important; box-sizing:border-box !important; }
+  #screens > #screen-plotoverview > #po-body.screen-body { display:flex !important; flex:1 1 0% !important; flex-direction:column !important; width:100% !important; height:0 !important; min-height:0 !important; max-height:none !important; margin:0 !important; padding:2px 4px !important; overflow:hidden !important; box-sizing:border-box !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap { display:grid !important; flex:1 1 0% !important; grid-template-columns:minmax(0,1fr) !important; grid-template-rows:minmax(0,1.15fr) minmax(0,.55fr) minmax(0,1fr) repeat(3,minmax(0,1fr)) !important; grid-auto-rows:minmax(0,.45fr) !important; gap:2px !important; align-content:stretch !important; align-items:stretch !important; justify-content:stretch !important; justify-items:stretch !important; width:100% !important; height:auto !important; min-height:0 !important; max-height:none !important; margin:0 !important; padding:0 !important; box-sizing:border-box !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-hero,
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-camera,
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-compliance,
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-link-card,
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-timeline-detail { width:100% !important; height:100% !important; min-width:0 !important; min-height:0 !important; max-height:none !important; margin:0 !important; align-self:stretch !important; justify-self:stretch !important; box-sizing:border-box !important; overflow:hidden !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-hero { display:block !important; padding:8px 12px !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-camera { display:flex !important; align-items:center !important; padding:4px 10px !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-compliance { display:flex !important; flex-direction:column !important; justify-content:center !important; padding:4px 8px !important; }
+  #screens > #screen-plotoverview > #po-body > .po23-wrap > .po23-link-card { display:flex !important; align-items:center !important; padding:5px 9px !important; gap:8px !important; }
+  #screens > #screen-plotoverview .po23-counts { display:grid !important; flex:1 1 auto !important; width:100% !important; min-height:0 !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:3px !important; }
+  #screens > #screen-plotoverview .po23-count { width:100% !important; height:100% !important; min-width:0 !important; min-height:0 !important; margin:0 !important; box-sizing:border-box !important; }
+  #screens > #screen-plotoverview > .po-delete-footer { display:block !important; position:relative !important; flex:0 0 48px !important; width:100% !important; height:48px !important; min-height:48px !important; max-height:48px !important; margin:0 !important; padding:4px 4px !important; background:#f3f6fa !important; z-index:50 !important; visibility:visible !important; opacity:1 !important; box-sizing:border-box !important; }
+  #screens > #screen-plotoverview > .po-delete-footer > .btn { display:flex !important; width:100% !important; height:40px !important; min-height:40px !important; margin:0 !important; padding:5px 10px !important; visibility:visible !important; opacity:1 !important; }
+}
+</style>
 </body>
 
 </html>
