@@ -3457,8 +3457,22 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       toast('Project updated');
     }
 
-    function openPlot(id) { const plot = plots[id]; if (!plot) { toast('This plot is no longer available'); return; } state.plotId = id; state.projectId = plot.projectId; go('plotoverview'); }
-    function openChecklist(id) { state.plotId = id; go('checklist'); }
+    function openPlot(id) {
+      const plot = plots[id];
+      if (!plot) { toast('This plot is no longer available'); return; }
+      state.plotId = id;
+      state.projectId = plot.projectId;
+      state.selectedPhoto = null;
+      go('plotoverview');
+    }
+    function openChecklist(id) {
+      const plot = plots[id];
+      if (!plot) { toast('This plot is no longer available'); return; }
+      state.plotId = id;
+      state.projectId = plot.projectId;
+      state.selectedPhoto = null;
+      go('checklist');
+    }
     function openCamera(projectId) {
       if (!projects[projectId]) { toast('The selected project could not be found'); return; }
       state.photoProject = projectId; state.photoPlot = null; state.photoCategory = null; state.photoImage = null;
@@ -4235,32 +4249,37 @@ return `
       const item = plot.checklist.find(entry => Array.isArray(entry) && entry[0] === category);
       const matchingPhotos = plot.gallery.filter(photo => photo && photo.category === category);
       const targetPhoto = selectedPhoto && matchingPhotos.includes(selectedPhoto) ? selectedPhoto : matchingPhotos[0];
+      if (!targetPhoto) { toast('No evidence photo is available to review for this checklist item.'); return false; }
+
       const previousItemStatus = item ? item[1] : null;
-      const previousPhotoStatus = targetPhoto ? targetPhoto.reviewStatus : null;
-      const previousRejectionReason = targetPhoto ? targetPhoto.rejectionReason : undefined;
+      const previousPhotoStatus = targetPhoto.reviewStatus;
+      const previousRejectionReason = targetPhoto.rejectionReason;
       const previousScore = plot.score;
       const previousStatus = plot.status;
       const previousTimeline = plot.timeline.slice();
 
-      if (item) item[1] = status === 'approved' ? 'done' : status === 'rejected' ? 'rejected' : 'pending';
-      if (targetPhoto) {
-        targetPhoto.reviewStatus = status;
-        if (status === 'rejected') targetPhoto.rejectionReason = reason || 'Photo does not meet the evidence requirements';
-        else delete targetPhoto.rejectionReason;
+      targetPhoto.reviewStatus = status;
+      if (status === 'rejected') targetPhoto.rejectionReason = reason || 'Photo does not meet the evidence requirements';
+      else delete targetPhoto.rejectionReason;
+
+      if (item) {
+        const hasApproved = matchingPhotos.some(photo => photo.reviewStatus === 'approved');
+        const hasPending = matchingPhotos.some(photo => !['approved','rejected'].includes(photo.reviewStatus || 'pending'));
+        const hasRejected = matchingPhotos.some(photo => photo.reviewStatus === 'rejected');
+        item[1] = hasApproved ? 'done' : hasPending ? 'pending' : hasRejected ? 'rejected' : 'missing';
       }
 
-      const approved = plot.checklist.filter(entry => Array.isArray(entry) && entry[1] === 'done').length;
-      plot.score = plot.checklist.length ? Math.round((approved / plot.checklist.length) * 100) : 0;
+      const validItems = plot.checklist.filter(entry => Array.isArray(entry));
+      const approved = validItems.filter(entry => entry[1] === 'done').length;
+      plot.score = validItems.length ? Math.round((approved / validItems.length) * 100) : 0;
       plot.status = plot.score === 0 ? 'Not Started' : plot.score < 100 ? 'In Progress' : 'Complete';
 
       if (!saveData()) {
         if (item) item[1] = previousItemStatus;
-        if (targetPhoto) {
-          if (previousPhotoStatus === undefined) delete targetPhoto.reviewStatus;
-          else targetPhoto.reviewStatus = previousPhotoStatus;
-          if (previousRejectionReason === undefined) delete targetPhoto.rejectionReason;
-          else targetPhoto.rejectionReason = previousRejectionReason;
-        }
+        if (previousPhotoStatus === undefined) delete targetPhoto.reviewStatus;
+        else targetPhoto.reviewStatus = previousPhotoStatus;
+        if (previousRejectionReason === undefined) delete targetPhoto.rejectionReason;
+        else targetPhoto.rejectionReason = previousRejectionReason;
         plot.score = previousScore;
         plot.status = previousStatus;
         plot.timeline = previousTimeline;
@@ -4324,12 +4343,15 @@ return `
       const previousStatus = plot.status;
 
       plot.gallery.splice(index, 1);
-      const evidenceStillExists = plot.gallery.some(item => item && item.category === photoCategory);
       const checklistItem = (plot.checklist || []).find(item => Array.isArray(item) && item[0] === photoCategory);
-      if (checklistItem && !evidenceStillExists) {
-        checklistItem[1] = 'missing';
-        const checklist = Array.isArray(plot.checklist) ? plot.checklist : [];
-        const approved = checklist.filter(item => Array.isArray(item) && item[1] === 'done').length;
+      if (checklistItem) {
+        const remaining = plot.gallery.filter(item => item && item.category === photoCategory);
+        const hasApproved = remaining.some(item => item.reviewStatus === 'approved');
+        const hasPending = remaining.some(item => !['approved','rejected'].includes(item.reviewStatus || 'pending'));
+        const hasRejected = remaining.some(item => item.reviewStatus === 'rejected');
+        checklistItem[1] = hasApproved ? 'done' : hasPending ? 'pending' : hasRejected ? 'rejected' : 'missing';
+        const checklist = Array.isArray(plot.checklist) ? plot.checklist.filter(item => Array.isArray(item)) : [];
+        const approved = checklist.filter(item => item[1] === 'done').length;
         plot.score = checklist.length ? Math.round((approved / checklist.length) * 100) : 0;
         plot.status = plot.score === 0 ? 'Not Started' : plot.score < 100 ? 'In Progress' : 'Complete';
       }
