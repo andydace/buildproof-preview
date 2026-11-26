@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.71 – Plot Overview Footer Clearance</title>
+  <title>PlotVault v11.73 – Plot Overview Safe-Area and Visual Refinement</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -3508,19 +3508,19 @@ return `
           </section>
 
           <button class="po23-link-card ${rejected ? 'po23-retake-alert' : ''}" onclick="openChecklist(decodeURIComponent('${pvEventArg(p.id)}'))">
-            <span class="po23-link-accent" aria-hidden="true"></span>
+            <span class="po23-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8l2 2h2v14H4V6h2l2-2Z"/><path d="M8 4v4h8V4M8 13h8M8 17h5"/></svg></span>
             <span class="po23-link-copy"><strong>Checklist (${total})</strong><small>${rejected ? `⚠ ${rejected} photo${rejected === 1 ? '' : 's'} require retaking` : 'View and complete compliance items'}</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
 
           <button class="po23-link-card" onclick="go('evidencegallery')">
-            <span class="po23-link-accent" aria-hidden="true"></span>
+            <span class="po23-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></span>
             <span class="po23-link-copy"><strong>Gallery (${p.gallery.length})</strong><small>View site photos and evidence</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
 
           <button class="po23-link-card po23-timeline-card" onclick="toggleTimeline()">
-            <span class="po23-link-accent" aria-hidden="true"></span>
+            <span class="po23-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
             <span class="po23-link-copy"><strong>Recent Timeline</strong><small>${escapeHTML(latestActivity)}</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
@@ -5072,6 +5072,83 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
   max-height:52px!important;
   position:relative!important;
   bottom:auto!important;
+}
+
+/* v11.73: iPhone safe-area fit and coordinated Plot Overview visual refinement */
+#frame>#screen-plotoverview.active{
+  top:24px!important;right:0!important;bottom:70px!important;left:0!important;
+  width:100%!important;height:auto!important;max-height:none!important;
+  overflow:hidden!important;box-sizing:border-box!important;
+}
+#frame>#screen-plotoverview>.topnav{
+  flex:0 0 46px!important;height:46px!important;min-height:46px!important;
+  padding:3px 12px!important;
+}
+#frame>#screen-plotoverview .topnav-title h1{
+  font-size:17px!important;font-weight:850!important;line-height:1.05!important;
+  color:#173b56!important;letter-spacing:-.25px!important;
+}
+#frame>#screen-plotoverview>#po-body.screen-body{
+  flex:1 1 0!important;min-height:0!important;height:auto!important;
+  overflow:hidden!important;padding:5px 7px!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:minmax(88px,1.12fr) minmax(43px,.48fr) minmax(78px,.88fr) repeat(3,minmax(55px,.68fr))!important;
+  gap:5px!important;width:100%!important;height:100%!important;min-height:0!important;
+  overflow:hidden!important;
+}
+#frame>#screen-plotoverview .po23-number{font-weight:900!important;font-size:31px!important}
+#frame>#screen-plotoverview .po23-hero:after{
+  width:126px!important;height:112px!important;right:-24px!important;top:-18px!important;
+  opacity:.48!important;border-width:1px!important;
+}
+#frame>#screen-plotoverview .po23-house{
+  width:45%!important;height:78px!important;right:5px!important;top:5px!important;
+  opacity:.19!important;
+}
+#frame>#screen-plotoverview .po23-tagline{right:12px!important;bottom:30px!important}
+#frame>#screen-plotoverview .po23-hero-copy{padding-bottom:24px!important}
+#frame>#screen-plotoverview .po23-status{margin-top:7px!important}
+#frame>#screen-plotoverview .po23-progress-line{left:12px!important;right:52px!important;bottom:7px!important}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{
+  background:linear-gradient(110deg,#16834f 0%,#20a765 55%,#137b4a 100%)!important;
+  border:1px solid rgba(255,255,255,.65)!important;
+  box-shadow:0 7px 16px rgba(14,105,65,.22),inset 0 1px 0 rgba(255,255,255,.30)!important;
+}
+#frame>#screen-plotoverview .po23-count.po23-complete{
+  background:linear-gradient(145deg,#e3fff0 0%,#b9f0d1 100%)!important;
+  border-color:#b5e9cc!important;color:#12663d!important;
+}
+#frame>#screen-plotoverview .po23-count.po23-pending{
+  background:linear-gradient(145deg,#fff8d9 0%,#ffdf8a 100%)!important;
+  border-color:#f4d98d!important;color:#855400!important;
+}
+#frame>#screen-plotoverview .po23-count.po23-missing{
+  background:linear-gradient(145deg,#ffe9e7 0%,#ffbdb8 100%)!important;
+  border-color:#f4c0bc!important;color:#a32626!important;
+}
+#frame>#screen-plotoverview .po23-link-icon{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 34px!important;width:34px!important;height:34px!important;
+  border-radius:11px!important;background:linear-gradient(145deg,#e4f5ff,#cceafa)!important;
+  box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(35,102,139,.12)!important;
+}
+#frame>#screen-plotoverview .po23-link-icon svg{
+  display:block!important;width:20px!important;height:20px!important;
+  fill:none!important;stroke:#167ba6!important;stroke-width:1.8!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#frame>#screen-plotoverview .po23-link-accent{display:none!important}
+#frame>#screen-plotoverview>.po-delete-footer{
+  flex:0 0 50px!important;height:50px!important;min-height:50px!important;max-height:50px!important;
+}
+#frame>#screen-plotoverview>.po-delete-footer>.btn{height:38px!important;min-height:38px!important}
+@media(max-height:740px){
+ #frame>#screen-plotoverview.active{top:22px!important;bottom:66px!important}
+ #frame>#screen-plotoverview>.topnav{flex-basis:43px!important;height:43px!important;min-height:43px!important}
+ #frame>#screen-plotoverview>.po-delete-footer{flex-basis:46px!important;height:46px!important;min-height:46px!important;max-height:46px!important}
+ #frame>#screen-plotoverview>#po-body>.po23-wrap{grid-template-rows:minmax(78px,1.08fr) minmax(40px,.45fr) minmax(70px,.84fr) repeat(3,minmax(49px,.65fr))!important;gap:4px!important}
 }
 </style>
 
