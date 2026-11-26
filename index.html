@@ -4613,9 +4613,15 @@ return `
         return;
       }
 
+      state.plotId = '';
+      state.selectedPhoto = null;
+      state.photoImage = null;
+      state.photoPlot = null;
+      state.photoProject = state.projectId;
+      state.history = state.history.filter(screen => !['projectdetails','plotoverview','checklist','evidencegallery','camera','category','notes','photoreview'].includes(screen));
       renderProjects();
       renderReports();
-      go('projects');
+      go('projects', false);
       toast('Project deleted and saved.');
     }
 
@@ -4758,7 +4764,8 @@ return `
         const project = projects[p.projectId] || {name:'Unknown project'};
         return `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(p.number)}</strong><span class="badge ${ready?'badge-green':'badge-amber'}">${ready?'Ready':'Draft available'}</span></div><div style="font-size:12.5px;color:var(--muted);margin:6px 0 12px">${escapeHTML(project.name)} · ${approved}/${items.length} items approved</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="generatePlotReport(decodeURIComponent('${pvEventArg(p.id)}'))">Generate / Print report</button><button class="btn btn-secondary btn-sm" onclick="openChecklist(decodeURIComponent('${pvEventArg(p.id)}'))">Review checklist</button></div></div>`;
       }).join('') : '<div class="empty-state"><div class="ic">📄</div>No plots available. Add a plot and complete its Part L checklist to generate a report.</div>';
-      history.innerHTML = reportHistory.length ? [...reportHistory].reverse().map(r => `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(r.plotNumber)} · Part L</strong><span class="badge ${r.status==='Draft'?'badge-amber':'badge-blue'}">${escapeHTML(r.status || 'Generated')}</span></div><div style="font-size:12px;color:var(--muted);margin:6px 0 12px">${escapeHTML(r.projectName)} · ${escapeHTML(r.generatedAt)}</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openSavedReport(decodeURIComponent('${pvEventArg(r.id)}'))">Open / Print</button><button class="btn btn-secondary btn-sm" onclick="downloadReportHTML(decodeURIComponent('${pvEventArg(r.id)}'))" >Download HTML</button><button class="btn btn-primary btn-sm" onclick="shareSavedReport(decodeURIComponent('${pvEventArg(r.id)}'))">Share report file</button></div></div>`).join('') : '<div class="empty-state"><div class="ic">🗂️</div>No reports have been generated yet.</div>';
+      const validReports = reportHistory.filter(report => report && typeof report === 'object' && !Array.isArray(report));
+      history.innerHTML = validReports.length ? [...validReports].reverse().map(r => `<div class="card"><div class="row"><strong style="color:var(--navy)">${escapeHTML(r.plotNumber || 'Plot')} · Part L</strong><span class="badge ${r.status==='Draft'?'badge-amber':'badge-blue'}">${escapeHTML(r.status || 'Generated')}</span></div><div style="font-size:12px;color:var(--muted);margin:6px 0 12px">${escapeHTML(r.projectName || 'Project not recorded')} · ${escapeHTML(r.generatedAt || 'Date not recorded')}</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openSavedReport(decodeURIComponent('${pvEventArg(r.id)}'))" ${typeof r.html === 'string' && r.html ? '' : 'disabled'}>Open / Print</button><button class="btn btn-secondary btn-sm" onclick="downloadReportHTML(decodeURIComponent('${pvEventArg(r.id)}'))" ${typeof r.html === 'string' && r.html ? '' : 'disabled'}>Download HTML</button><button class="btn btn-primary btn-sm" onclick="shareSavedReport(decodeURIComponent('${pvEventArg(r.id)}'))" ${typeof r.html === 'string' && r.html ? '' : 'disabled'}>Share report file</button></div></div>`).join('') : '<div class="empty-state"><div class="ic">🗂️</div>No reports have been generated yet.</div>';
     }
     function buildReportDocument(plot) {
       const project = projects[plot.projectId] || {};
