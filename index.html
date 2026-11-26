@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.73 – Plot Overview Safe-Area and Visual Refinement</title>
+  <title>PlotVault v11.74 – Enhanced Plot Overview Glass Styling</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -5149,6 +5149,46 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
  #frame>#screen-plotoverview>.topnav{flex-basis:43px!important;height:43px!important;min-height:43px!important}
  #frame>#screen-plotoverview>.po-delete-footer{flex-basis:46px!important;height:46px!important;min-height:46px!important;max-height:46px!important}
  #frame>#screen-plotoverview>#po-body>.po23-wrap{grid-template-rows:minmax(78px,1.08fr) minmax(40px,.45fr) minmax(70px,.84fr) repeat(3,minmax(49px,.65fr))!important;gap:4px!important}
+}
+
+/* v11.74: make the glass treatment visibly stronger without changing layout dimensions */
+#frame>#screen-plotoverview>#po-body.screen-body{
+  background:
+    radial-gradient(ellipse at 10% 12%,rgba(108,183,224,.34),transparent 43%),
+    radial-gradient(ellipse at 92% 75%,rgba(89,151,196,.24),transparent 46%),
+    linear-gradient(145deg,#e5f0f8 0%,#dce9f3 52%,#edf4f9 100%)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.66),rgba(229,242,252,.42))!important;
+  -webkit-backdrop-filter:blur(22px) saturate(180%)!important;
+  backdrop-filter:blur(22px) saturate(180%)!important;
+  border:1px solid rgba(255,255,255,.94)!important;
+  box-shadow:0 9px 22px rgba(34,76,110,.14),0 2px 5px rgba(34,76,110,.07),inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(91,142,178,.12)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card:before{
+  content:""!important;position:absolute!important;inset:0!important;z-index:-1!important;
+  pointer-events:none!important;
+  background:linear-gradient(115deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.12) 48%,rgba(116,185,220,.12) 100%)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance{
+  background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(235,245,252,.48))!important;
+  -webkit-backdrop-filter:blur(20px) saturate(175%)!important;
+  backdrop-filter:blur(20px) saturate(175%)!important;
+  border:1px solid rgba(255,255,255,.96)!important;
+  box-shadow:0 10px 22px rgba(35,76,109,.13),inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(91,142,178,.10)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{
+  -webkit-backdrop-filter:blur(16px) saturate(175%)!important;
+  backdrop-filter:blur(16px) saturate(175%)!important;
+  border:1px solid rgba(255,255,255,.68)!important;
+  box-shadow:0 10px 20px rgba(13,105,65,.25),inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(0,45,24,.14)!important;
+}
+#frame>#screen-plotoverview>.topnav{
+  background:linear-gradient(120deg,rgba(255,255,255,.90),rgba(233,244,251,.78))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(160%)!important;
+  backdrop-filter:blur(18px) saturate(160%)!important;
+  border-bottom:1px solid rgba(255,255,255,.85)!important;
 }
 </style>
 
