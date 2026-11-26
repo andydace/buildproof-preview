@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.70 – Plot Overview Selector Correction</title>
+  <title>PlotVault v11.71 – Plot Overview Footer Clearance</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -5052,6 +5052,26 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
  #frame>#screen-plotoverview .po23-compliance,
  #frame>#screen-plotoverview .po23-link-card,
  #frame>#screen-plotoverview .po23-timeline-detail{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+
+/* v11.71: reserve the bottom navigation area on Plot Overview so Delete Plot remains visible */
+#frame>#screen-plotoverview.active{
+  top:0!important;
+  right:0!important;
+  bottom:58px!important;
+  left:0!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:hidden!important;
+}
+#frame>#screen-plotoverview>.po-delete-footer{
+  flex:0 0 52px!important;
+  height:52px!important;
+  min-height:52px!important;
+  max-height:52px!important;
+  position:relative!important;
+  bottom:auto!important;
 }
 </style>
 
