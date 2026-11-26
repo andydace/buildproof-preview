@@ -4763,7 +4763,7 @@ return `
     function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
     // IDs and checklist labels are stored data. Encode them before placing them
     // inside inline event-handler attributes, then decode at the call boundary.
-    function pvEventArg(value) { return encodeURIComponent(String(value ?? '')); }
+    function pvEventArg(value) { return encodeURIComponent(String(value ?? '')).replace(/'/g, '%27'); }
     function renderReports() {
       const eligible = document.getElementById('report-eligible-list');
       const history = document.getElementById('report-history-list');
