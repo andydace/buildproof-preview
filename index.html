@@ -3460,12 +3460,17 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     function openPlot(id) { const plot = plots[id]; if (!plot) { toast('This plot is no longer available'); return; } state.plotId = id; state.projectId = plot.projectId; go('plotoverview'); }
     function openChecklist(id) { state.plotId = id; go('checklist'); }
     function openCamera(projectId) {
-      state.photoProject = projectId; state.photoPlot = null; state.photoCategory = null;
-      document.getElementById('cam-context-pill').textContent = projects[projectId].name; go('camera');
+      if (!projects[projectId]) { toast('The selected project could not be found'); return; }
+      state.photoProject = projectId; state.photoPlot = null; state.photoCategory = null; state.photoImage = null;
+      const pill = document.getElementById('cam-context-pill');
+      if (pill) pill.textContent = projects[projectId].name || 'Project';
+      go('camera');
     }
     function openCameraFor(projectId, plotId, category) {
-      state.photoProject = projectId; state.photoPlot = plotId; state.photoCategory = category || null;
-      document.getElementById('cam-context-pill').textContent = projects[projectId].name + (plotId ? ' · ' + plots[plotId].number : '');
+      if (!projects[projectId] || !plots[plotId] || plots[plotId].projectId !== projectId) { toast('The selected project or plot could not be found'); return; }
+      state.photoProject = projectId; state.photoPlot = plotId; state.photoCategory = category || null; state.photoImage = null;
+      const pill = document.getElementById('cam-context-pill');
+      if (pill) pill.textContent = (projects[projectId].name || 'Project') + ' · ' + (plots[plotId].number || 'Plot');
       go('camera');
     }
     function capturePhoto() {
@@ -4089,15 +4094,22 @@ return `
     }
     function renderChecklist() {
       const p = plots[state.plotId];
-      if (!p) return;
-      const approved = p.checklist.filter(i => i[1] === 'done').length;
-      const pending = p.checklist.filter(i => i[1] === 'pending').length;
-      const missing = p.checklist.filter(i => i[1] === 'missing' || i[1] === 'rejected').length;
-      const progress = p.checklist.length ? Math.round((approved / p.checklist.length) * 100) : 0;
-      document.getElementById('cl-sub').textContent = p.number + ' · ' + projects[p.projectId].name;
-      document.getElementById('checklist-body').innerHTML = `
+      const subtitle = document.getElementById('cl-sub');
+      const body = document.getElementById('checklist-body');
+      if (!body) return;
+      if (!p) { body.innerHTML = '<div class="empty-state">Select a plot to view its checklist.</div>'; return; }
+      if (!Array.isArray(p.checklist)) p.checklist = [];
+      if (!Array.isArray(p.gallery)) p.gallery = [];
+      const project = projects[p.projectId] || { name: 'Project not recorded' };
+      const items = p.checklist.filter(item => Array.isArray(item));
+      const approved = items.filter(i => i[1] === 'done').length;
+      const pending = items.filter(i => i[1] === 'pending').length;
+      const missing = items.filter(i => i[1] === 'missing' || i[1] === 'rejected').length;
+      const progress = items.length ? Math.round((approved / items.length) * 100) : 0;
+      if (subtitle) subtitle.textContent = (p.number || 'Plot') + ' · ' + (project.name || 'Project not recorded');
+      body.innerHTML = `
         <section class="cl-progress-card">
-          <div class="cl-progress-heading"><span class="cl-progress-title">Compliance Progress</span><span class="cl-captured-count">${p.gallery.length} of ${p.checklist.length} Items Captured</span></div>
+          <div class="cl-progress-heading"><span class="cl-progress-title">Compliance Progress</span><span class="cl-captured-count">${p.gallery.length} of ${items.length} Items Captured</span></div>
           <div class="cl-progress-percent">${progress}% Complete</div>
           <div class="cl-progress-track" role="progressbar" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"><div class="cl-progress-fill" style="width:${progress}%"></div></div>
           <div class="cl-summary-grid">
@@ -4106,7 +4118,7 @@ return `
             <div class="cl-summary-tile cl-summary-missing"><span class="cl-summary-icon">✕</span><span class="cl-summary-value">${missing}</span><span class="cl-summary-label">Missing</span></div>
           </div>
         </section>
-        <section class="cl-items-list" aria-label="Part L evidence checklist">${p.checklist.map(([name, st]) => checklistRow(name, st, p.id)).join('')}</section>
+        <section class="cl-items-list" aria-label="Part L evidence checklist">${items.map(item => checklistRow(item[0], item[1], p.id)).join('')}</section>
         <p class="cl-help-text">Capture the missing evidence and approve submitted items when reviewed.</p>`;
     }
     function renderGallery() {
@@ -4458,136 +4470,22 @@ return `
     }
 
     function updateDashboardStats() {
-
-      const plotList =
-        Object.values(plots);
-
-      const projectCount =
-        Object.keys(projects).length;
-
-      const siteHealth =
-        plotList.length
-          ? Math.round(
-            plotList.reduce(
-              (total, plot) => total + plot.score,
-              0
-            ) / plotList.length
-          )
-          : 0;
-
-
-
-
-
-
-
-      const approvedCount =
-        plotList.reduce((total, plot) => {
-
-          return total +
-            plot.checklist.filter(
-              item => item[1] === 'done'
-            ).length;
-
-        }, 0);
-
-
-
-      const pendingCount =
-        plotList.reduce((total, plot) => {
-
-          return total +
-            plot.checklist.filter(
-              item => item[1] === 'pending'
-            ).length;
-
-        }, 0);
-
-      const missingCount =
-        plotList.reduce((total, plot) => {
-
-          return total +
-            plot.checklist.filter(
-              item => item[1] === 'missing' || item[1] === 'rejected'
-            ).length;
-
-        }, 0);
-
-      const projectsEl =
-        document.getElementById(
-          'dash-projects-count'
-        );
-
-      if (projectsEl) {
-        projectsEl.textContent =
-          "Projects: " + projectCount;
-      }
-
-      document.getElementById(
-        'dash-plots-active'
-      ).textContent =
-        "Plots: " + plotList.length;
-
-
-      const completeEl =
-        document.getElementById(
-          'dash-complete'
-        );
-
-      if (completeEl) {
-        completeEl.textContent =
-          "Approved: " + approvedCount;
-      }
-
-
-      const pendingEl =
-        document.getElementById(
-          'dash-pending-count'
-        );
-
-      if (pendingEl) {
-        pendingEl.textContent =
-          "Pending: " + pendingCount;
-      }
-
-
-      document.getElementById(
-        'dash-notstarted'
-      ).textContent =
-        "Missing: " + missingCount;
-
-      const siteHealthEl =
-        document.getElementById(
-          'site-health-score'
-        );
-
-      if (siteHealthEl) {
-        siteHealthEl.textContent =
-          siteHealth + "%";
-      }
-
-      const badgeEl =
-        document.getElementById(
-          'site-health-badge'
-        );
-
-      if (badgeEl) {
-
-        if (siteHealth >= 90) {
-          badgeEl.textContent = "Excellent";
-        }
-        else if (siteHealth >= 70) {
-          badgeEl.textContent = "Good";
-        }
-        else if (siteHealth >= 40) {
-          badgeEl.textContent = "Needs Attention";
-        }
-        else {
-          badgeEl.textContent = "Poor";
-        }
-
-      }
-
+      const plotList = Object.values(plots).filter(plot => plot && typeof plot === 'object');
+      const projectCount = Object.keys(projects).length;
+      const scoreTotal = plotList.reduce((total, plot) => total + (Number(plot.score) || 0), 0);
+      const siteHealth = plotList.length ? Math.round(scoreTotal / plotList.length) : 0;
+      const checklistFor = plot => Array.isArray(plot.checklist) ? plot.checklist.filter(item => Array.isArray(item)) : [];
+      const approvedCount = plotList.reduce((total, plot) => total + checklistFor(plot).filter(item => item[1] === 'done').length, 0);
+      const pendingCount = plotList.reduce((total, plot) => total + checklistFor(plot).filter(item => item[1] === 'pending').length, 0);
+      const missingCount = plotList.reduce((total, plot) => total + checklistFor(plot).filter(item => item[1] === 'missing' || item[1] === 'rejected').length, 0);
+      const put = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+      put('dash-projects-count', 'Projects: ' + projectCount);
+      put('dash-plots-active', 'Plots: ' + plotList.length);
+      put('dash-complete', 'Approved: ' + approvedCount);
+      put('dash-pending-count', 'Pending: ' + pendingCount);
+      put('dash-notstarted', 'Missing: ' + missingCount);
+      put('site-health-score', siteHealth + '%');
+      put('site-health-badge', siteHealth >= 90 ? 'Excellent' : siteHealth >= 70 ? 'Good' : siteHealth >= 40 ? 'Needs Attention' : 'Poor');
     }
 
     function handleProjectSearch(value) {
@@ -4872,15 +4770,19 @@ return `
       const rows = (plot.checklist || []).map(([name,status]) => `<tr><td>${escapeHTML(name)}</td><td>${escapeHTML(status === 'done' ? 'Approved' : status === 'pending' ? 'Pending review' : 'Missing')}</td></tr>`).join('');
       const photos = (plot.gallery || []).filter(photo => photo && typeof photo.image === 'string' && /^data:image\/(jpeg|png|webp);base64,/i.test(photo.image)).map((photo,i) => {
         const captured = photo.timestamp || photo.date || 'Date not recorded';
-        const gps = Number.isFinite(Number(photo.latitude)) && Number.isFinite(Number(photo.longitude)) && photo.latitude !== '' && photo.longitude !== ''
-          ? `${Number(photo.latitude).toFixed(6)}, ${Number(photo.longitude).toFixed(6)}` : 'GPS not recorded';
+        const hasGps = photo.latitude !== null && photo.latitude !== undefined && photo.longitude !== null && photo.longitude !== undefined && photo.latitude !== '' && photo.longitude !== '' && Number.isFinite(Number(photo.latitude)) && Number.isFinite(Number(photo.longitude));
+        const gps = hasGps ? `${Number(photo.latitude).toFixed(6)}, ${Number(photo.longitude).toFixed(6)}` : 'GPS not recorded';
         const section = photo.category || 'Uncategorised';
         const projectLabel = project.name || 'Project not recorded';
         const plotLabel = photo.plot || plot.number || 'Plot not recorded';
         const overlay = `<div class="photo-stamp"><strong>${escapeHTML(projectLabel)}</strong><span>${escapeHTML(plotLabel)}</span><span>${escapeHTML(section)}</span><span>${escapeHTML(captured)}</span><span>GPS: ${escapeHTML(gps)}</span></div>`;
         return `<figure class="evidence-photo"><div class="photo-frame"><div class="photo-image-wrap"><img src="${escapeHTML(photo.image)}" alt="Evidence photo ${i+1}">${overlay}</div></div><figcaption><b>Evidence ${i+1} — ${escapeHTML(section)}</b>${photo.notes ? `<br>${escapeHTML(photo.notes)}` : ''}<br><small>Captured: ${escapeHTML(captured)} · ${photo.accuracy != null ? `GPS accuracy ±${escapeHTML(photo.accuracy)}m` : 'GPS accuracy not recorded'}</small></figcaption></figure>`;
       }).join('');
-      const evidenceRegister = (plot.gallery || []).map((photo,i) => `<tr><td>${i+1}</td><td>${escapeHTML(photo.category || 'Uncategorised')}</td><td>${escapeHTML(photo.timestamp || photo.date || 'Date not recorded')}</td><td>${Number.isFinite(Number(photo.latitude)) && Number.isFinite(Number(photo.longitude)) ? `${Number(photo.latitude).toFixed(6)}, ${Number(photo.longitude).toFixed(6)}` : 'Not recorded'}</td><td>${escapeHTML(photo.notes || '')}</td></tr>`).join('');
+      const evidenceRegister = (plot.gallery || []).filter(photo => photo && typeof photo === 'object').map((photo,i) => {
+        const hasGps = photo.latitude !== null && photo.latitude !== undefined && photo.longitude !== null && photo.longitude !== undefined && photo.latitude !== '' && photo.longitude !== '' && Number.isFinite(Number(photo.latitude)) && Number.isFinite(Number(photo.longitude));
+        const gpsText = hasGps ? `${Number(photo.latitude).toFixed(6)}, ${Number(photo.longitude).toFixed(6)}` : 'Not recorded';
+        return `<tr><td>${i+1}</td><td>${escapeHTML(photo.category || 'Uncategorised')}</td><td>${escapeHTML(photo.timestamp || photo.date || 'Date not recorded')}</td><td>${gpsText}</td><td>${escapeHTML(photo.notes || '')}</td></tr>`;
+      }).join('');
       return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="plotvault-build" content="${PLOTVAULT_VERSION}"><title>Part L Report - ${escapeHTML(plot.number)}</title><style>
         *{box-sizing:border-box}body{font:14px Arial,sans-serif;color:#263746;margin:32px;line-height:1.45}h1,h2{color:#0F2A3D}header{border-bottom:3px solid #1E6B8C;padding-bottom:16px;margin-bottom:22px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:9px;border:1px solid #d9e0e6;vertical-align:top}th{background:#edf3f7}.footer{margin-top:32px;color:#667;font-size:12px}.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:14px}.evidence-photo{margin:0;break-inside:avoid;page-break-inside:avoid}.photo-frame{display:flex;justify-content:center;align-items:flex-end;width:100%;overflow:hidden;background:#e9eef2}.photo-image-wrap{position:relative;display:inline-block;max-width:100%;line-height:0}.photo-frame img{display:block;width:auto;height:auto;max-width:100%;max-height:430px;object-fit:contain}.photo-stamp{position:absolute;right:8px;bottom:8px;max-width:78%;display:flex;flex-direction:column;gap:2px;padding:0;background:transparent;border:0;color:#fff;font-size:10px;line-height:1.25;text-align:right;overflow-wrap:anywhere;text-shadow:0 1px 3px rgba(0,0,0,.95),1px 0 2px rgba(0,0,0,.85),-1px 0 2px rgba(0,0,0,.85)}.photo-stamp strong{font-size:12px}.evidence-photo figcaption{font-size:11px;padding:7px 1px;color:#425466}.evidence-photo figcaption small{color:#667}.no-photos{padding:16px;background:#f4f7f9;border:1px solid #d9e0e6}@media(max-width:700px){body{margin:16px}.evidence-grid{grid-template-columns:1fr}}@media print{body{margin:12mm}.evidence-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.photo-frame,.evidence-photo{break-inside:avoid;page-break-inside:avoid}.photo-stamp{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
