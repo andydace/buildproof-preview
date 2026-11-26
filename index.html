@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.67 – Glass Finish Plot Overview</title>
+  <title>PlotVault v11.68 – Plot Overview Layout Correction</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -2631,7 +2631,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (overlay) overlay.style.display = 'none';
     }
 
-    const PLOTVAULT_VERSION = '11.67';
+    const PLOTVAULT_VERSION = '11.68';
     function saveData() {
       const keys = {
         projects: 'plotvaultProjects',
@@ -3508,19 +3508,19 @@ return `
           </section>
 
           <button class="po23-link-card ${rejected ? 'po23-retake-alert' : ''}" onclick="openChecklist(decodeURIComponent('${pvEventArg(p.id)}'))">
-            <span class="po23-link-icon po23-check-icon">▤</span>
+            <span class="po23-link-accent" aria-hidden="true"></span>
             <span class="po23-link-copy"><strong>Checklist (${total})</strong><small>${rejected ? `⚠ ${rejected} photo${rejected === 1 ? '' : 's'} require retaking` : 'View and complete compliance items'}</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
 
           <button class="po23-link-card" onclick="go('evidencegallery')">
-            <span class="po23-link-icon po23-gallery-icon">▧</span>
+            <span class="po23-link-accent" aria-hidden="true"></span>
             <span class="po23-link-copy"><strong>Gallery (${p.gallery.length})</strong><small>View site photos and evidence</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
 
           <button class="po23-link-card po23-timeline-card" onclick="toggleTimeline()">
-            <span class="po23-link-icon po23-time-icon">◷</span>
+            <span class="po23-link-accent" aria-hidden="true"></span>
             <span class="po23-link-copy"><strong>Recent Timeline</strong><small>${escapeHTML(latestActivity)}</small></span>
             <span class="po23-link-arrow">›</span>
           </button>
@@ -4924,6 +4924,130 @@ body>#frame{display:flex;flex-direction:column;position:relative;width:100%;max-
   #screens>#screen-plotoverview .po23-timeline-detail{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 
+</style>
+
+
+<style id="plotvault-v1168-plot-layout-correction">
+/* v11.68: use a single flex column so the footer always has its own space */
+#frame{height:100vh!important;height:100dvh!important;min-height:0!important;max-height:100dvh!important;padding:0!important;overflow:hidden!important}
+#frame>#statusbar{flex:0 0 24px!important;height:24px!important;min-height:24px!important}
+#frame>#screens{position:relative!important;flex:1 1 0!important;width:100%!important;height:0!important;min-height:0!important;overflow:hidden!important}
+#screens>#screen-plotoverview,
+#screens>#screen-plotoverview.active{
+  position:absolute!important;inset:0!important;display:none!important;
+  flex-direction:column!important;align-items:stretch!important;
+  width:100%!important;height:100%!important;min-height:0!important;
+  max-height:none!important;margin:0!important;padding:0!important;
+  overflow:hidden!important;box-sizing:border-box!important;
+  background:#e8f0f7!important;
+}
+#screens>#screen-plotoverview.active{display:flex!important}
+#screens>#screen-plotoverview>.topnav{
+  position:relative!important;top:auto!important;flex:0 0 48px!important;
+  width:100%!important;height:48px!important;min-height:48px!important;
+  margin:0!important;padding:4px 12px!important;box-sizing:border-box!important;
+}
+#screens>#screen-plotoverview>#po-body.screen-body{
+  display:flex!important;flex:1 1 0!important;flex-direction:column!important;
+  width:100%!important;height:auto!important;min-height:0!important;
+  max-height:none!important;margin:0!important;padding:7px 8px!important;
+  overflow:hidden!important;box-sizing:border-box!important;
+  background:
+    radial-gradient(ellipse at 8% 4%,rgba(103,177,220,.30),transparent 42%),
+    radial-gradient(ellipse at 95% 45%,rgba(75,133,181,.20),transparent 44%),
+    linear-gradient(145deg,#edf4fa 0%,#e3edf6 52%,#f2f6fa 100%)!important;
+}
+#screens>#screen-plotoverview>#po-body>.po23-wrap{
+  display:grid!important;flex:1 1 0!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1.2fr) minmax(0,.55fr) minmax(0,1fr) repeat(3,minmax(0,.78fr))!important;
+  grid-auto-rows:minmax(0,.5fr)!important;gap:6px!important;
+  width:100%!important;height:100%!important;min-height:0!important;
+  max-height:none!important;margin:0!important;padding:0!important;
+  align-content:stretch!important;align-items:stretch!important;
+  box-sizing:border-box!important;
+}
+#screens>#screen-plotoverview>#po-body>.po23-wrap:has(>.po23-timeline-detail){
+  grid-template-rows:minmax(0,1.02fr) minmax(0,.48fr) minmax(0,.88fr) repeat(3,minmax(0,.68fr)) minmax(0,.55fr)!important;
+}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero,
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera,
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance,
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card,
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-timeline-detail{
+  width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+  max-height:none!important;margin:0!important;align-self:stretch!important;
+  justify-self:stretch!important;box-sizing:border-box!important;overflow:hidden!important;
+  border:1px solid rgba(255,255,255,.78)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(145%)!important;
+  backdrop-filter:blur(14px) saturate(145%)!important;
+}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero{
+  position:relative!important;display:block!important;padding:9px 12px!important;
+  background:radial-gradient(ellipse at 88% 8%,rgba(111,205,237,.28),transparent 40%),linear-gradient(135deg,#0c2945 0%,#12476b 52%,#176f91 100%)!important;
+  box-shadow:0 12px 25px rgba(13,49,78,.24),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+#screens>#screen-plotoverview .po23-hero-copy{padding-bottom:29px!important}
+#screens>#screen-plotoverview .po23-status{margin-top:13px!important}
+#screens>#screen-plotoverview .po23-progress-line{bottom:8px!important;gap:10px!important}
+#screens>#screen-plotoverview .po23-progress-track{height:8px!important;background:rgba(255,255,255,.22)!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:999px!important}
+#screens>#screen-plotoverview .po23-progress-track span{display:block!important;height:100%!important;background:linear-gradient(90deg,#72e0b0,#20c58a)!important;border-radius:999px!important}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{
+  display:flex!important;align-items:center!important;padding:5px 11px!important;
+  color:#fff!important;background:linear-gradient(110deg,rgba(13,69,105,.97),rgba(25,120,157,.93))!important;
+  box-shadow:0 9px 18px rgba(16,78,115,.20),inset 0 1px 0 rgba(255,255,255,.30)!important;
+}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance{
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+  padding:6px 8px!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.91),rgba(244,249,254,.76))!important;
+  box-shadow:0 9px 20px rgba(43,78,109,.12),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+#screens>#screen-plotoverview .po23-count{border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 5px 12px rgba(30,62,91,.10),inset 0 1px 0 rgba(255,255,255,.95)!important}
+#screens>#screen-plotoverview .po23-count.po23-complete{background:linear-gradient(145deg,rgba(232,250,240,.96),rgba(204,239,220,.86))!important}
+#screens>#screen-plotoverview .po23-count.po23-pending{background:linear-gradient(145deg,rgba(255,249,229,.97),rgba(255,232,177,.87))!important}
+#screens>#screen-plotoverview .po23-count.po23-missing{background:linear-gradient(145deg,rgba(255,239,237,.97),rgba(255,214,210,.87))!important}
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card{
+  display:flex!important;align-items:center!important;gap:10px!important;padding:5px 10px!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(246,250,254,.78))!important;
+  box-shadow:0 7px 16px rgba(36,70,100,.11),inset 0 1px 0 rgba(255,255,255,.98)!important;
+}
+#screens>#screen-plotoverview .po23-link-accent{
+  display:block!important;flex:0 0 5px!important;width:5px!important;height:27px!important;
+  border-radius:5px!important;background:linear-gradient(180deg,#53b7df,#176f91)!important;
+  box-shadow:0 2px 6px rgba(23,91,129,.20)!important;
+}
+#screens>#screen-plotoverview .po23-link-copy{flex:1 1 auto!important;min-width:0!important;gap:3px!important}
+#screens>#screen-plotoverview .po23-link-copy strong{font-size:14px!important;color:#183b57!important}
+#screens>#screen-plotoverview .po23-link-copy small{font-size:11px!important;color:#65788b!important}
+#screens>#screen-plotoverview>.po-delete-footer{
+  display:flex!important;position:relative!important;inset:auto!important;
+  flex:0 0 52px!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;height:52px!important;min-height:52px!important;max-height:52px!important;
+  margin:0!important;padding:5px 8px!important;box-sizing:border-box!important;
+  visibility:visible!important;opacity:1!important;z-index:5!important;
+  background:linear-gradient(180deg,rgba(232,240,247,.75),rgba(232,240,247,.98))!important;
+  border-top:1px solid rgba(255,255,255,.8)!important;
+  -webkit-backdrop-filter:blur(12px)!important;backdrop-filter:blur(12px)!important;
+}
+#screens>#screen-plotoverview>.po-delete-footer>.btn{
+  display:flex!important;position:relative!important;visibility:visible!important;opacity:1!important;
+  width:100%!important;height:40px!important;min-height:40px!important;margin:0!important;
+  align-items:center!important;justify-content:center!important;z-index:6!important;
+}
+@media(max-height:740px){
+ #screens>#screen-plotoverview>.topnav{flex-basis:44px!important;height:44px!important;min-height:44px!important}
+ #screens>#screen-plotoverview>.po-delete-footer{flex-basis:48px!important;height:48px!important;min-height:48px!important;max-height:48px!important}
+ #screens>#screen-plotoverview>.po-delete-footer>.btn{height:38px!important;min-height:38px!important}
+ #screens>#screen-plotoverview>#po-body>.po23-wrap{gap:4px!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #screens>#screen-plotoverview>#po-body.screen-body{background:#eaf1f7!important}
+ #screens>#screen-plotoverview .po23-camera,
+ #screens>#screen-plotoverview .po23-compliance,
+ #screens>#screen-plotoverview .po23-link-card,
+ #screens>#screen-plotoverview .po23-timeline-detail{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
 </style>
 
 </body>
