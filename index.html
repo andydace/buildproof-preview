@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.78 – Unified Glass Design System</title>
+  <title>PlotVault v11.79 – Branded Projects Header</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -2098,25 +2098,12 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 
       <!-- PROJECTS -->
       <div class="screen" id="screen-projects">
-        <div class="topnav">
-          <div class="topnav-title">
-            <h1 style="
-    font-size:28px;
-    font-weight:800;
-    margin:0;
-    line-height:1;
-">
-    PlotVault
-</h1>
-<div style="
-    font-size:13px;
-    color:var(--muted);
-    margin-top:6px;
-">
-    Capture, verify, comply
-</div>
+        <div class="topnav pv-projects-brandbar">
+          <div class="pv-brand-lockup">
+            <img src="https://raw.githubusercontent.com/andydace/buildproof/main/plotvault-logo.png" class="pv-header-logo" alt="PlotVault" />
+            <div class="pv-brand-tagline">CAPTURE <span>•</span> VERIFY <span>•</span> COMPLY</div>
           </div>
-          
+          <div class="pv-header-accent" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
         
         <div class="screen-body"style="padding-bottom:90px;">
@@ -2631,7 +2618,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (overlay) overlay.style.display = 'none';
     }
 
-    const PLOTVAULT_VERSION = '11.78';
+    const PLOTVAULT_VERSION = '11.79';
     function saveData() {
       const keys = {
         projects: 'plotvaultProjects',
@@ -5532,6 +5519,36 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
 }
 @media(max-width:390px){
   #frame>#screen-projects>.topnav{flex-basis:43px!important;height:43px!important;min-height:43px!important}
+}
+
+
+/* v11.79: branded glass header for Projects */
+#frame>#screen-projects>.pv-projects-brandbar{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;
+  justify-content:space-between!important;flex:0 0 76px!important;height:76px!important;min-height:76px!important;
+  padding:10px 17px 9px!important;
+  background:linear-gradient(118deg,rgba(255,255,255,.94) 0%,rgba(239,248,253,.84) 48%,rgba(218,236,248,.78) 100%)!important;
+  border-bottom:1px solid rgba(255,255,255,.96)!important;
+  box-shadow:0 8px 22px rgba(26,70,103,.12),inset 0 1px 0 #fff!important;
+  -webkit-backdrop-filter:blur(24px) saturate(185%)!important;
+  backdrop-filter:blur(24px) saturate(185%)!important;
+  position:relative!important;overflow:hidden!important;z-index:6!important;
+}
+#frame>#screen-projects>.pv-projects-brandbar:before{
+  content:""!important;position:absolute!important;left:0!important;right:0!important;top:0!important;height:2px!important;
+  background:linear-gradient(90deg,rgba(35,124,170,.10),rgba(48,151,198,.72),rgba(255,255,255,.9),rgba(35,124,170,.10))!important;
+}
+#frame>#screen-projects .pv-brand-lockup{position:relative!important;z-index:1!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:2px!important;min-width:0!important}
+#frame>#screen-projects .pv-header-logo{display:block!important;width:142px!important;height:37px!important;max-width:58vw!important;object-fit:contain!important;object-position:left center!important;filter:drop-shadow(0 2px 2px rgba(19,58,86,.10))!important}
+#frame>#screen-projects .pv-brand-tagline{font-size:8px!important;font-weight:800!important;letter-spacing:1.65px!important;color:#56758c!important;line-height:1!important;padding-left:2px!important}
+#frame>#screen-projects .pv-brand-tagline span{color:#2592bd!important;padding:0 2px!important}
+#frame>#screen-projects .pv-header-accent{position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;gap:5px!important;padding:8px 10px!important;border-radius:16px!important;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(214,235,247,.42))!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 5px 13px rgba(35,83,116,.10),inset 0 1px 0 #fff!important}
+#frame>#screen-projects .pv-header-accent span{width:5px!important;height:5px!important;border-radius:50%!important;background:linear-gradient(145deg,#67c7e7,#1a719b)!important;box-shadow:0 0 5px rgba(43,145,190,.30)!important}
+#frame>#screen-projects>.screen-body{padding-top:12px!important}
+@media(max-width:390px){
+ #frame>#screen-projects>.pv-projects-brandbar{flex-basis:70px!important;height:70px!important;min-height:70px!important;padding:8px 14px!important}
+ #frame>#screen-projects .pv-header-logo{width:130px!important;height:34px!important}
+ #frame>#screen-projects .pv-brand-tagline{font-size:7px!important;letter-spacing:1.35px!important}
 }
 
 </style>
