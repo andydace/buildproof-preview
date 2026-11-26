@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.74 – Enhanced Plot Overview Glass Styling</title>
+  <title>PlotVault v11.75 – Glossy Glass Highlights</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -5189,6 +5189,87 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
   -webkit-backdrop-filter:blur(18px) saturate(160%)!important;
   backdrop-filter:blur(18px) saturate(160%)!important;
   border-bottom:1px solid rgba(255,255,255,.85)!important;
+}
+
+/* v11.75: stronger polished-glass highlights; visual-only, no layout changes */
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card:after,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance:after,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  border-radius:inherit!important;
+  background:
+    linear-gradient(112deg,
+      rgba(255,255,255,.58) 0%,
+      rgba(255,255,255,.23) 18%,
+      rgba(255,255,255,.05) 42%,
+      transparent 58%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.30) 0%,
+      rgba(255,255,255,.08) 22%,
+      transparent 48%,
+      rgba(31,76,112,.045) 100%)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card:before,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance:before,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera:before{
+  content:""!important;
+  position:absolute!important;
+  left:8%!important;right:8%!important;top:1px!important;
+  height:1px!important;z-index:2!important;
+  pointer-events:none!important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.98) 22%,rgba(255,255,255,.98) 78%,transparent)!important;
+  box-shadow:0 1px 5px rgba(255,255,255,.48)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card>*,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance>*,
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera>*{
+  position:relative!important;z-index:3!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-link-card{
+  box-shadow:
+    0 12px 25px rgba(34,76,110,.16),
+    0 3px 7px rgba(34,76,110,.08),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(91,142,178,.15)!important;
+  border-color:rgba(255,255,255,.98)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-compliance{
+  box-shadow:
+    0 12px 25px rgba(35,76,109,.15),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(91,142,178,.14)!important;
+}
+#frame>#screen-plotoverview>#po-body>.po23-wrap>.po23-camera{
+  box-shadow:
+    0 12px 23px rgba(13,105,65,.29),
+    inset 0 1px 0 rgba(255,255,255,.62),
+    inset 0 -2px 0 rgba(0,45,24,.17)!important;
+}
+#frame>#screen-plotoverview .po23-count{
+  border-color:rgba(255,255,255,.98)!important;
+  box-shadow:
+    0 6px 14px rgba(30,62,91,.13),
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 0 -2px 0 rgba(35,65,90,.06)!important;
+}
+#frame>#screen-plotoverview .po23-link-icon{
+  background:linear-gradient(150deg,rgba(255,255,255,.98),rgba(197,230,248,.82))!important;
+  border:1px solid rgba(255,255,255,.98)!important;
+  box-shadow:
+    0 5px 12px rgba(23,81,116,.16),
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(67,133,171,.12)!important;
 }
 </style>
 
