@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.65 – iPhone Delete Button and Plot Text Refinement</title>
+  <title>PlotVault v11.66 – Premium Plot Overview Polish</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -2631,7 +2631,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       if (overlay) overlay.style.display = 'none';
     }
 
-    const PLOTVAULT_VERSION = '11.65';
+    const PLOTVAULT_VERSION = '11.66';
     function saveData() {
       const keys = {
         projects: 'plotvaultProjects',
@@ -4697,7 +4697,7 @@ input:focus,textarea:focus,select:focus {
     go = function (...args) { _origGo(...args); enhanceKeyboardAccess(); };
   </script>
 
-<style id="plotvault-v1164-plot-overview-refinement">
+<style id="plotvault-v1166-plot-overview-refinement">
 /* v11.65: anchor Delete Plot reliably and refine Plot Overview text sizing */
 html,body{width:100%;height:100%;min-height:0;margin:0;padding:0}
 body{display:flex;align-items:stretch;justify-content:center;overflow:hidden}
@@ -4743,6 +4743,100 @@ body>#frame{display:flex;flex-direction:column;position:relative;width:100%;max-
 #screens>#screen-plotoverview .po23-count small{font-size:13px;line-height:1.2;text-align:center}
 #screens>#screen-plotoverview .po23-section-head{justify-content:center;text-align:center;gap:7px}
 #screens>#screen-plotoverview .po23-section-head strong{font-size:13px}
+
+/* v11.66: premium Plot Overview finish, clearer status spacing and touch feedback */
+#screens>#screen-plotoverview>#po-body>.po23-wrap>.po23-hero{
+  background:linear-gradient(135deg,#102d49 0%,#174e70 56%,#1b6b8e 100%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 8px 20px rgba(12,39,62,.20),inset 0 1px 0 rgba(255,255,255,.13);
+}
+#screens>#screen-plotoverview .po23-hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 42%,rgba(78,184,222,.08));
+}
+#screens>#screen-plotoverview .po23-hero-copy{position:relative;z-index:2;padding-bottom:21px}
+#screens>#screen-plotoverview .po23-number{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.16);letter-spacing:-1px}
+#screens>#screen-plotoverview .po23-house-type{color:rgba(255,255,255,.92)}
+#screens>#screen-plotoverview .po23-eyebrow{color:rgba(255,255,255,.68);font-weight:800}
+#screens>#screen-plotoverview .po23-status{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 11px;
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  box-shadow:0 3px 9px rgba(0,0,0,.14);font-size:11px;font-weight:750;
+}
+#screens>#screen-plotoverview .po23-status-dot{width:7px;height:7px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.13)}
+#screens>#screen-plotoverview .po23-progress-line{bottom:9px;gap:10px}
+#screens>#screen-plotoverview .po23-progress-track{
+  height:8px;border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  background:rgba(255,255,255,.18);box-shadow:inset 0 1px 2px rgba(0,0,0,.18);overflow:hidden;
+}
+#screens>#screen-plotoverview .po23-progress-track span{
+  display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#72e0b0 0%,#20c58a 100%);
+  box-shadow:0 0 9px rgba(63,224,166,.42);transition:width .35s ease;
+}
+#screens>#screen-plotoverview .po23-progress-line strong{color:#fff;font-size:12px;text-shadow:0 1px 4px rgba(0,0,0,.2)}
+#screens>#screen-plotoverview .po23-compliance{
+  background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);
+  border:1px solid #e1e9f1;box-shadow:0 4px 12px rgba(22,48,75,.07),inset 0 1px 0 #fff;
+}
+#screens>#screen-plotoverview .po23-count{
+  border:1px solid rgba(25,55,82,.07);border-radius:12px;
+  box-shadow:0 2px 6px rgba(20,45,70,.05);transition:transform .16s ease,box-shadow .16s ease;
+}
+#screens>#screen-plotoverview .po23-count.po23-complete{background:linear-gradient(180deg,#f0fbf5,#e5f6ed);color:#176b43}
+#screens>#screen-plotoverview .po23-count.po23-pending{background:linear-gradient(180deg,#fff9e9,#fff2d1);color:#8b5b00}
+#screens>#screen-plotoverview .po23-count.po23-missing{background:linear-gradient(180deg,#fff3f2,#ffe7e5);color:#a52b28}
+#screens>#screen-plotoverview .po23-count-icon{
+  border-radius:50%;background:rgba(255,255,255,.82);
+  box-shadow:0 1px 4px rgba(20,45,70,.10);font-weight:800;
+}
+#screens>#screen-plotoverview .po23-section-head{color:#173b58}
+#screens>#screen-plotoverview .po23-section-head small{color:#65788b;font-weight:650}
+#screens>#screen-plotoverview .po23-camera{
+  color:#fff;background:linear-gradient(105deg,#155078 0%,#1d79a2 100%);
+  border:1px solid rgba(255,255,255,.22);box-shadow:0 5px 12px rgba(18,82,119,.18),inset 0 1px 0 rgba(255,255,255,.16);
+}
+#screens>#screen-plotoverview .po23-camera-copy strong,
+#screens>#screen-plotoverview .po23-camera-copy small,
+#screens>#screen-plotoverview .po23-arrow{color:#fff}
+#screens>#screen-plotoverview .po23-camera-icon{filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+#screens>#screen-plotoverview .po23-link-card{
+  background:linear-gradient(180deg,#fff 0%,#f9fbfd 100%);
+  border:1px solid #e1e8ef;box-shadow:0 3px 9px rgba(20,45,70,.065);
+}
+#screens>#screen-plotoverview .po23-link-icon{box-shadow:0 2px 6px rgba(18,48,75,.10)}
+#screens>#screen-plotoverview .po23-link-copy strong{color:#183b57}
+#screens>#screen-plotoverview .po23-link-copy small{color:#65788b}
+#screens>#screen-plotoverview .po23-timeline-detail{
+  background:#fff;border:1px solid #e1e8ef;border-radius:12px;
+  box-shadow:0 3px 9px rgba(20,45,70,.06);
+}
+#screens>#screen-plotoverview .po-delete-footer{background:linear-gradient(180deg,rgba(243,246,250,.88),#f3f6fa 35%)}
+#screens>#screen-plotoverview .po-delete-footer>.btn{
+  border:1px solid rgba(255,255,255,.18);box-shadow:0 3px 9px rgba(130,35,35,.16);
+}
+#screens>#screen-plotoverview button{
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .14s ease,box-shadow .14s ease,filter .14s ease;
+}
+#screens>#screen-plotoverview button:active{
+  transform:scale(.985);filter:brightness(.97);
+  box-shadow:0 1px 3px rgba(15,42,66,.12);
+}
+#screens>#screen-plotoverview button:focus-visible{
+  outline:3px solid rgba(31,132,190,.48);outline-offset:2px;
+}
+@media (hover:hover){
+  #screens>#screen-plotoverview .po23-link-card:hover,
+  #screens>#screen-plotoverview .po23-camera:hover{
+    transform:translateY(-1px);box-shadow:0 6px 14px rgba(20,55,82,.13);
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  #screens>#screen-plotoverview button,
+  #screens>#screen-plotoverview .po23-progress-track span{transition:none}
+}
+
 </style>
 
 </body>
