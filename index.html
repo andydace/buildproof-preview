@@ -3665,7 +3665,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
           return { badge: 'badge-amber', dot: 'dot-amber', text: 'Pending Review' };
 
         case 'Report Ready':
-          return { badge: 'badge-green', dot: 'dot-green', text: 'Report Ready' };
+        case 'Complete':
+          return { badge: 'badge-green', dot: 'dot-green', text: 'Complete' };
 
         case 'In Progress':
           return { badge: 'badge-blue', dot: 'dot-green', text: 'In Progress' };
@@ -3801,7 +3802,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
           p.checklist.filter(i => i[1] === 'pending').length;
 
         const missing =
-          p.checklist.filter(i => i[1] === 'missing').length;
+          p.checklist.filter(i => i[1] === 'missing' || i[1] === 'rejected').length;
+        const score = Math.max(0, Math.min(100, Number(p.score) || 0));
 
 return `
 <div class="card tap"
@@ -3863,7 +3865,7 @@ return `
             line-height:1;
             color:var(--navy);
         ">
-            ${p.score || 0}%
+            ${score}%
         </div>
 
         <div style="
@@ -3884,8 +3886,8 @@ return `
              style="height:8px;">
 
             <div
-                class="progress-fill ${p.score >= 90 ? 'green' : p.score >= 70 ? 'amber' : ''}"
-                style="width:${p.score || 0}%">
+                class="progress-fill ${score >= 90 ? 'green' : score >= 70 ? 'amber' : ''}"
+                style="width:${score}%">
             </div>
 
         </div>
