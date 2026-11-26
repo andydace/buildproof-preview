@@ -3244,16 +3244,28 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
           if (!project || typeof project !== 'object' || Array.isArray(project)) {
             throw new Error('Invalid project record: ' + id);
           }
-          if (!project.id) project.id = id;
+          if (project.id && String(project.id) !== String(id)) {
+            throw new Error('Project ID does not match its saved record key: ' + id);
+          }
+          project.id = id;
         });
         Object.entries(nextPlots).forEach(([id, plot]) => {
           if (!plot || typeof plot !== 'object' || Array.isArray(plot)) {
             throw new Error('Invalid plot record: ' + id);
           }
-          if (!plot.id) plot.id = id;
+          if (plot.id && String(plot.id) !== String(id)) {
+            throw new Error('Plot ID does not match its saved record key: ' + id);
+          }
+          plot.id = id;
           if (!Array.isArray(plot.checklist)) plot.checklist = [];
+          else plot.checklist = plot.checklist.filter(item => Array.isArray(item));
           if (!Array.isArray(plot.gallery)) plot.gallery = [];
           if (!Array.isArray(plot.timeline)) plot.timeline = [];
+        });
+        nextReports = nextReports.filter(report => report && typeof report === 'object' && !Array.isArray(report));
+        nextReports.forEach((report, index) => {
+          if (!report.id) report.id = 'legacy_report_' + index + '_' + Date.now();
+          if (typeof report.html !== 'string') report.html = '';
         });
 
         // Commit the validated workspace to memory in one step.
