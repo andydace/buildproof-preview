@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.75 – Glossy Glass Highlights</title>
+  <title>PlotVault v11.76 – Compliance Symbols and House Halo</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -3503,7 +3503,7 @@ return `
             <div class="po23-counts">
               <div class="po23-count po23-complete"><span class="po23-count-icon">✓</span><strong>${approved}</strong><small>Complete</small></div>
               <div class="po23-count po23-pending"><span class="po23-count-icon">⌛</span><strong>${pending}</strong><small>Pending</small></div>
-              <div class="po23-count po23-missing"><span class="po23-count-icon">×</span><strong>${missing}</strong><small>Missing</small></div>
+              <div class="po23-count po23-missing"><span class="po23-count-icon">✕</span><strong>${missing}</strong><small>Missing</small></div>
             </div>
           </section>
 
@@ -5100,7 +5100,7 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
 }
 #frame>#screen-plotoverview .po23-number{font-weight:900!important;font-size:31px!important}
 #frame>#screen-plotoverview .po23-hero:after{
-  width:126px!important;height:112px!important;right:-24px!important;top:-18px!important;
+  width:150px!important;height:130px!important;right:-20px!important;top:-20px!important;
   opacity:.48!important;border-width:1px!important;
 }
 #frame>#screen-plotoverview .po23-house{
@@ -5270,6 +5270,28 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
     0 5px 12px rgba(23,81,116,.16),
     inset 0 2px 0 rgba(255,255,255,1),
     inset 0 -1px 0 rgba(67,133,171,.12)!important;
+}
+
+/* v11.76: make completion and missing symbols unmistakable; extend hero halo around house */
+#frame>#screen-plotoverview .po23-count.po23-complete .po23-count-icon{
+  color:#087b43!important;
+  background:linear-gradient(145deg,#ffffff 0%,#d6f8e4 100%)!important;
+  border:1px solid rgba(36,163,94,.24)!important;
+  box-shadow:0 2px 7px rgba(21,126,69,.18),inset 0 1px 0 #fff!important;
+  font-size:16px!important;font-weight:950!important;line-height:1!important;
+}
+#frame>#screen-plotoverview .po23-count.po23-missing .po23-count-icon{
+  color:#c32f32!important;
+  background:linear-gradient(145deg,#ffffff 0%,#ffe0de 100%)!important;
+  border:1px solid rgba(207,67,67,.24)!important;
+  box-shadow:0 2px 7px rgba(176,49,49,.16),inset 0 1px 0 #fff!important;
+  font-size:15px!important;font-weight:950!important;line-height:1!important;
+}
+#frame>#screen-plotoverview .po23-count.po23-pending .po23-count-icon{
+  color:#93600a!important;
+  background:linear-gradient(145deg,#fff 0%,#fff0c5 100%)!important;
+  border:1px solid rgba(201,143,30,.22)!important;
+  box-shadow:0 2px 7px rgba(170,119,20,.14),inset 0 1px 0 #fff!important;
 }
 </style>
 
