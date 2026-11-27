@@ -4064,7 +4064,7 @@ return `
         return `
           <div class="project-card tap" onclick="openProject(decodeURIComponent('${pvEventArg(project.id)}'))">
             <div class="project-card-main">
-              <button type="button" class="project-card-image project-photo-change" aria-label="Tap to change photo for ${escapeHTML(project.name)}" onclick="event.stopPropagation(); chooseProjectPhoto('${pvEventArg(project.id)}')"><img src="${escapeHTML(project.projectImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=360')}" alt="Project photo for ${escapeHTML(project.name)}"><span class="project-photo-hint">Tap to change photo</span></button>
+              <button type="button" class="project-card-image project-photo-change" aria-label="Tap to change photo for ${escapeHTML(project.name)}" onclick="event.stopPropagation(); chooseProjectPhoto('${pvEventArg(project.id)}')"><img src="${escapeHTML(project.projectImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=360')}" alt="Project photo for ${escapeHTML(project.name)}"></button>
               <div class="project-card-info">
                 <div class="project-card-heading"><div style="min-width:0"><div class="project-card-name">${escapeHTML(project.name)}</div><div class="project-card-location">${escapeHTML(project.location)}</div></div><span class="project-status ${statusTone}">${escapeHTML(statusLabel)}</span></div>
                 <div class="project-card-metrics">
@@ -5848,6 +5848,11 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
 #screen-projects .project-card-image.project-photo-change{flex-basis:80px!important;width:80px!important;height:120px!important}
 }
 
+
+/* v11.84: clean project photography and respect iPhone top safe area */
+#screen-projects.active{padding-top:env(safe-area-inset-top,0px)!important}
+#screen-projects .project-photo-hint{display:none!important}
+#screen-projects .project-card-image.project-photo-change{touch-action:manipulation!important}
 </style>
 
 </body>
