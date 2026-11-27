@@ -1487,6 +1487,19 @@
   }
 }
 
+
+/* v11.89: moderate logo enlargement without filling the Projects header */
+#screen-projects.active .pv-header-logo{
+  width:min(70vw,270px)!important;max-width:70vw!important;
+  height:auto!important;max-height:58px!important;
+  object-fit:contain!important;object-position:center center!important;
+}
+@media(max-width:390px){
+  #screen-projects.active .pv-header-logo{
+    width:68vw!important;max-width:68vw!important;max-height:54px!important;
+  }
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.85">
