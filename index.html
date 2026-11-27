@@ -6267,6 +6267,62 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
 #screen-projects.active{padding-top:env(safe-area-inset-top,0px)!important}
 #screen-projects .project-photo-hint{display:none!important}
 #screen-projects .project-card-image.project-photo-change{touch-action:manipulation!important}
+
+/* PlotVault checklist: match the approved glossy blue glass theme while retaining compact v11.22 sizing */
+#screen-checklist.active{background:linear-gradient(145deg,#eaf2fc 0%,#f5f8fd 48%,#e7f0fa 100%)!important}
+#screen-checklist>.topnav{background:linear-gradient(110deg,rgba(250,252,255,.97),rgba(229,240,252,.94))!important;border-bottom:1px solid rgba(48,105,158,.13)!important;box-shadow:0 3px 12px rgba(23,63,105,.045)!important}
+#screen-checklist>.screen-body{padding:10px 11px 88px!important;background:transparent!important}
+#screen-checklist .cl-progress-card{
+ background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(225,240,252,.72))!important;
+ border:1px solid rgba(255,255,255,.96)!important;border-radius:17px!important;
+ box-shadow:0 7px 20px rgba(23,63,105,.09),inset 0 1px 0 #fff, inset 0 -1px 0 rgba(69,126,173,.08)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(175%)!important;backdrop-filter:blur(22px) saturate(175%)!important;
+ position:relative!important;overflow:hidden!important
+}
+#screen-checklist .cl-progress-card:before,#screen-checklist .cl-item-card:before{
+ content:"";position:absolute;left:12px;right:12px;top:0;height:1px;pointer-events:none;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent)
+}
+#screen-checklist .cl-progress-title{color:#24466e!important;font-weight:850!important}
+#screen-checklist .cl-captured-count{color:#68839c!important;font-weight:650!important}
+#screen-checklist .cl-progress-percent{color:#155b91!important}
+#screen-checklist .cl-progress-track{background:rgba(65,111,145,.15)!important;box-shadow:inset 0 1px 2px rgba(25,62,105,.08)!important}
+#screen-checklist .cl-progress-fill{background:linear-gradient(90deg,#53b7df 0%,#2389c5 52%,#1769a5 100%)!important;box-shadow:0 0 9px rgba(35,137,197,.3)!important}
+#screen-checklist .cl-summary-tile{
+ border:1px solid rgba(255,255,255,.9)!important;
+ box-shadow:0 3px 9px rgba(23,63,105,.055),inset 0 1px 0 rgba(255,255,255,.9)!important
+}
+#screen-checklist .cl-summary-approved{background:linear-gradient(145deg,rgba(231,249,239,.96),rgba(208,239,224,.82))!important}
+#screen-checklist .cl-summary-pending{background:linear-gradient(145deg,rgba(255,248,232,.96),rgba(250,234,199,.82))!important}
+#screen-checklist .cl-summary-missing{background:linear-gradient(145deg,rgba(255,240,242,.96),rgba(249,219,224,.82))!important}
+#screen-checklist .cl-summary-value{color:#183b57!important}
+#screen-checklist .cl-item-card{
+ position:relative!important;overflow:hidden!important;
+ background:linear-gradient(135deg,rgba(255,255,255,.91),rgba(235,244,252,.78))!important;
+ border:1px solid rgba(255,255,255,.96)!important;border-radius:13px!important;
+ box-shadow:0 4px 12px rgba(24,57,94,.075),inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(57,111,157,.06)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(170%)!important;backdrop-filter:blur(18px) saturate(170%)!important
+}
+#screen-checklist .cl-item-copy,#screen-checklist .cl-item-icon,#screen-checklist .cl-item-action{position:relative!important;z-index:1!important}
+#screen-checklist .cl-item-ref{color:#173e60!important}
+#screen-checklist .cl-item-description{color:#5b748b!important}
+#screen-checklist .cl-item-done .cl-item-icon{background:linear-gradient(145deg,#35b879,#168653)!important;box-shadow:0 2px 7px rgba(22,134,83,.22)!important}
+#screen-checklist .cl-item-pending .cl-item-icon{background:linear-gradient(145deg,#f5bd4f,#d88a0a)!important;box-shadow:0 2px 7px rgba(216,138,10,.2)!important}
+#screen-checklist .cl-item-missing .cl-item-icon,#screen-checklist .cl-item-rejected .cl-item-icon{background:linear-gradient(145deg,#f07880,#cc3548)!important;box-shadow:0 2px 7px rgba(204,53,72,.2)!important}
+#screen-checklist .cl-item-notstarted .cl-item-icon{background:linear-gradient(145deg,#b9c9d8,#8299ad)!important}
+#screen-checklist .cl-action-approve{background:linear-gradient(135deg,#2589e8,#1769c2 58%,#12539f)!important;box-shadow:0 3px 8px rgba(23,105,194,.22),inset 0 1px 0 rgba(255,255,255,.24)!important}
+#screen-checklist .cl-action-photo{background:linear-gradient(135deg,#35b879,#168653)!important;box-shadow:0 3px 8px rgba(22,134,83,.2),inset 0 1px 0 rgba(255,255,255,.22)!important}
+#screen-checklist .cl-action-approved{background:linear-gradient(145deg,#e8f8ef,#d3f0df)!important;color:#167347!important;border:1px solid rgba(40,153,95,.12)!important}
+#screen-checklist .cl-action-notstarted{background:linear-gradient(145deg,#f4f7fa,#e4edf5)!important;color:#60788d!important;border:1px solid rgba(95,127,153,.12)!important}
+#screen-checklist .cl-help-text{color:#6d879c!important}
+#screen-checklist .cl-rejection-reason{color:#b83245!important}
+#screen-checklist button{ -webkit-tap-highlight-color:transparent;transition:transform .14s ease,filter .14s ease,box-shadow .14s ease}
+#screen-checklist button:active{transform:scale(.98);filter:brightness(.97)}
+@media(max-width:520px){
+ #screen-checklist>.screen-body{padding:8px 9px 84px!important}
+ #screen-checklist .cl-progress-card{border-radius:15px!important}
+ #screen-checklist .cl-item-card{border-radius:12px!important}
+}
 </style>
 
 </body>
