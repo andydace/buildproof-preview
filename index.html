@@ -2174,11 +2174,15 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 </style>
 
 
+
 <style>
-/* Project Overview photo picker — reuse the existing compressed, persistent project-photo workflow */
-#screen-projectdetails .project-detail-image{position:relative;cursor:pointer;}
-#screen-projectdetails .project-detail-image .pd-change-photo{position:absolute;right:12px;bottom:12px;z-index:2;border:1px solid rgba(255,255,255,.7);border-radius:13px;padding:9px 13px;background:rgba(12,31,57,.72);color:#fff;font-size:12px;font-weight:750;box-shadow:0 4px 14px rgba(0,0,0,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
-#screen-projectdetails .project-detail-image .pd-change-photo:active{transform:scale(.97);}
+/* Project Overview: compact plot rows so more plots are visible without scrolling */
+#screen-projectdetails #plot-list .card{padding:9px 12px!important;margin:0 0 6px!important;border-radius:15px!important;}
+#screen-projectdetails #plot-list .card>div:first-child{margin-bottom:5px!important;}
+#screen-projectdetails #plot-list .card>div:first-child>div>div:first-child{font-size:16px!important;}
+#screen-projectdetails #plot-list .card>div:nth-child(2){margin-bottom:5px!important;}
+#screen-projectdetails #plot-list .card .progress-track{height:7px!important;}
+#screen-projectdetails #plot-list .card>div:last-child{font-size:10px!important;gap:8px!important;}
 </style>
 </head>
 
@@ -2530,7 +2534,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       <button class="back-btn" onclick="back()">← Back</button>
       <div class="project-detail-image">
         <img id="pd-project-image" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200" alt="Residential development">
-        <button type="button" class="pd-change-photo" onclick="chooseProjectPhoto(state.projectId)" aria-label="Change project photograph">Change photo</button>
+        
       </div>
       <div class="project-detail-content">
         <div class="project-title-row">
