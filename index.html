@@ -1557,6 +1557,61 @@
   }
 }
 
+
+
+/* v11.92: replace the boxed image with a text-only glossy PlotVault wordmark */
+#screen-projects.active>.pv-projects-brandbar{
+  flex:0 0 100px!important;height:100px!important;min-height:100px!important;max-height:100px!important;
+  padding:9px 14px 10px!important;justify-content:center!important;overflow:visible!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(235,245,251,.58))!important;
+  border-bottom:1px solid rgba(255,255,255,.78)!important;
+  box-shadow:0 5px 16px rgba(34,76,110,.07),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+#screen-projects.active .pv-brand-lockup{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:9px!important;width:auto!important;
+  transform:none!important;
+}
+#screen-projects.active .pv-header-logo-text{
+  display:flex!important;align-items:baseline!important;justify-content:center!important;
+  padding:0 3px 2px!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:none!important;box-shadow:none!important;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  font-size:43px!important;line-height:.98!important;font-weight:950!important;
+  letter-spacing:-2.5px!important;white-space:nowrap!important;
+  -webkit-font-smoothing:antialiased!important;
+  filter:drop-shadow(0 2px 2px rgba(18,62,100,.20))!important;
+}
+#screen-projects.active .pv-logo-plot{
+  color:#0d3159!important;
+  background:linear-gradient(180deg,#ffffff 0%,#9bc9e9 13%,#1b5b91 38%,#092d55 70%,#4f9dcc 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.55)!important;
+}
+#screen-projects.active .pv-logo-vault{
+  color:#087bc1!important;
+  background:linear-gradient(180deg,#ffffff 0%,#a9e8ff 12%,#36b6ef 34%,#0873bb 64%,#064b86 83%,#7bd5ff 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.62)!important;
+}
+#screen-projects.active .pv-brand-tagline{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;z-index:2!important;margin:0!important;padding:0 3px!important;
+  text-align:center!important;font-size:9px!important;line-height:1.25!important;
+  font-weight:800!important;letter-spacing:2px!important;color:#56758c!important;
+  white-space:nowrap!important;
+}
+#screen-projects.active .pv-brand-tagline span{color:#2592bd!important;padding:0 2px!important}
+@media(max-width:390px){
+  #screen-projects.active>.pv-projects-brandbar{
+    flex-basis:96px!important;height:96px!important;min-height:96px!important;max-height:96px!important;
+    padding:8px 12px 9px!important;
+  }
+  #screen-projects.active .pv-brand-lockup{gap:8px!important}
+  #screen-projects.active .pv-header-logo-text{font-size:38px!important;letter-spacing:-2.2px!important}
+  #screen-projects.active .pv-brand-tagline{font-size:8px!important;letter-spacing:1.65px!important}
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.85">
@@ -2286,7 +2341,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       <div class="screen" id="screen-projects">
         <div class="topnav pv-projects-brandbar">
           <div class="pv-brand-lockup">
-            <img src="https://raw.githubusercontent.com/andydace/buildproof/main/plotvault-logo.png" class="pv-header-logo" alt="PlotVault" />
+            <div class="pv-header-logo-text" role="img" aria-label="PlotVault"><span class="pv-logo-plot">Plot</span><span class="pv-logo-vault">Vault</span></div>
             <div class="pv-brand-tagline">CAPTURE <span>•</span> VERIFY <span>•</span> COMPLY</div>
           </div>
           <div class="pv-header-accent" aria-hidden="true"><span></span><span></span><span></span></div>
