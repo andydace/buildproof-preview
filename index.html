@@ -1500,6 +1500,19 @@
   }
 }
 
+
+/* v11.90: set logo to approximately 30% larger than its original fixed size */
+#screen-projects.active .pv-header-logo{
+  display:block!important;width:185px!important;max-width:80vw!important;
+  height:auto!important;max-height:none!important;
+  object-fit:contain!important;object-position:center center!important;
+}
+@media(max-width:390px){
+  #screen-projects.active .pv-header-logo{
+    width:169px!important;max-width:76vw!important;height:auto!important;max-height:none!important;
+  }
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.85">
