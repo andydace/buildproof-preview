@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 300" role="img" aria-labelledby="title desc">
+<title id="title">PlotVault</title><desc id="desc">Glossy navy and blue PlotVault wordmark with a house symbol and the tagline Capture, verify, comply.</desc>
+<defs>
+ <linearGradient id="navy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#52799b"/><stop offset=".18" stop-color="#173e66"/><stop offset=".58" stop-color="#071f3e"/><stop offset=".82" stop-color="#153c67"/><stop offset="1" stop-color="#06172f"/></linearGradient>
+ <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cecff"/><stop offset=".16" stop-color="#21c8ff"/><stop offset=".48" stop-color="#087ed0"/><stop offset=".78" stop-color="#0060ad"/><stop offset="1" stop-color="#003e7d"/></linearGradient>
+ <linearGradient id="roof" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9deaff"/><stop offset=".35" stop-color="#1d75bb"/><stop offset="1" stop-color="#09294d"/></linearGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="#fff" stop-opacity=".2"/><stop offset=".52" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="4"/><feComponentTransfer><feFuncA type="linear" slope=".25"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g transform="translate(12 18)" filter="url(#shadow)">
+ <path d="M8 134 L126 42 L245 134" fill="none" stroke="#0a315a" stroke-width="19" stroke-linejoin="round"/>
+ <path d="M8 127 L126 35 L245 127" fill="none" stroke="url(#roof)" stroke-width="13" stroke-linejoin="round"/>
+ <path d="M39 119 V190 H213 V119" fill="#f7fbff" fill-opacity=".32" stroke="#9ac9e8" stroke-width="4"/>
+ <path d="M91 145h28v27H91zM135 145h28v27h-28zM91 181h28v27H91zM135 181h28v27h-28z" fill="url(#blue)" stroke="#d6f3ff" stroke-width="2"/>
+ <path d="M0 226 Q126 161 255 226 Q126 194 0 226" fill="url(#blue)" stroke="#0b4c83" stroke-width="3"/>
+</g>
+<g font-family="Arial, Helvetica, sans-serif" font-weight="800" letter-spacing="-7" filter="url(#shadow)">
+ <text x="292" y="205" font-size="166" fill="url(#navy)" stroke="#d6e8f7" stroke-opacity=".45" stroke-width="2">Plot</text>
+ <text x="628" y="205" font-size="166" fill="url(#blue)" stroke="#b8edff" stroke-opacity=".8" stroke-width="2">Vault</text>
+ <text x="292" y="205" font-size="166" fill="url(#shine)" opacity=".68">Plot</text>
+ <text x="628" y="205" font-size="166" fill="url(#shine)" opacity=".72">Vault</text>
+</g>
+<path d="M270 232 H850" stroke="#6fa9d1" stroke-width="2" opacity=".65"/>
+<text x="560" y="280" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="500" letter-spacing="3" fill="#102f50">CAPTURE, VERIFY, COMPLY</text>
+</svg>
