@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlotVault v11.82 – Projects Glass Theme</title>
+  <title>PlotVault v11.83 – Project Photo Upload</title>
   <style>
     :root {
       --navy: #0F2A3D;
@@ -2125,6 +2125,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
             
           </div>
           <div id="projects-list" class="projects-list"></div>
+          <input id="project-photo-upload" type="file" accept="image/*" aria-label="Choose project photo" style="display:none" onchange="handleProjectPhotoUpload(this)">
         </div>
       </div>
     </div>
@@ -3992,6 +3993,67 @@ return `
       });
     }
 
+    let projectPhotoPressTimer = null;
+    let pendingProjectPhotoId = null;
+    function startProjectPhotoPress(event, encodedId) {
+      if (event) event.stopPropagation();
+      if (projectPhotoPressTimer) clearTimeout(projectPhotoPressTimer);
+      const id = decodeURIComponent(encodedId);
+      projectPhotoPressTimer = setTimeout(() => {
+        projectPhotoPressTimer = null;
+        if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(18);
+        if (confirm('Change the photo for this project? You can choose from your photo library or browse files, including OneDrive if available.')) chooseProjectPhoto(id);
+      }, 650);
+    }
+    function cancelProjectPhotoPress(event) {
+      if (event) event.stopPropagation();
+      if (projectPhotoPressTimer) { clearTimeout(projectPhotoPressTimer); projectPhotoPressTimer = null; }
+    }
+    function projectPhotoContextMenu(event, encodedId) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      cancelProjectPhotoPress(event);
+      const id = decodeURIComponent(encodedId);
+      if (confirm('Change the photo for this project? Choose from your photo library or browse files, including OneDrive if available.')) chooseProjectPhoto(id);
+      return false;
+    }
+    function chooseProjectPhoto(id) {
+      if (!projects[id]) { toast('Project not found'); return; }
+      pendingProjectPhotoId = id;
+      const picker = document.getElementById('project-photo-upload');
+      if (!picker) { toast('Photo picker is unavailable'); return; }
+      picker.value = ''; picker.click();
+    }
+    function handleProjectPhotoUpload(input) {
+      const file = input && input.files && input.files[0];
+      const id = pendingProjectPhotoId; pendingProjectPhotoId = null;
+      if (!file || !id || !projects[id]) return;
+      if (!/^image\//i.test(file.type || '')) { toast('Please choose an image file'); return; }
+      if (file.size > 15 * 1024 * 1024) { toast('Please choose a photo smaller than 15 MB'); return; }
+      const reader = new FileReader();
+      reader.onerror = () => toast('The selected photo could not be read');
+      reader.onload = () => {
+        const source = new Image();
+        source.onerror = () => toast('The selected file is not a supported image');
+        source.onload = () => {
+          try {
+            const scale = Math.min(1, 640 / source.width, 480 / source.height);
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(source.width * scale));
+            canvas.height = Math.max(1, Math.round(source.height * scale));
+            const context = canvas.getContext('2d');
+            if (!context) throw new Error('Image processing is unavailable');
+            context.drawImage(source, 0, 0, canvas.width, canvas.height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.76);
+            const previous = projects[id].projectImage || '';
+            projects[id].projectImage = compressed;
+            if (!saveData()) { if (previous) projects[id].projectImage = previous; else delete projects[id].projectImage; return; }
+            renderProjects(); toast('Project photo updated');
+          } catch (error) { console.error('Project photo processing failed', error); toast('Unable to prepare this photo. Please try another image'); }
+        };
+        source.src = String(reader.result || '');
+      };
+      reader.readAsDataURL(file);
+    }
     function renderProjects() {
       updateProjectStats();
       const seenProjectKeys = new Set();
@@ -4024,7 +4086,7 @@ return `
         return `
           <div class="project-card tap" onclick="openProject(decodeURIComponent('${pvEventArg(project.id)}'))">
             <div class="project-card-main">
-              <div class="project-card-image"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=360" alt="Construction site at ${escapeHTML(project.name)}"></div>
+              <button type="button" class="project-card-image project-photo-change" aria-label="Hold to change photo for ${escapeHTML(project.name)}" onpointerdown="startProjectPhotoPress(event, '${pvEventArg(project.id)}')" onpointerup="cancelProjectPhotoPress(event)" onpointerleave="cancelProjectPhotoPress(event)" onpointercancel="cancelProjectPhotoPress(event)" oncontextmenu="projectPhotoContextMenu(event, '${pvEventArg(project.id)}')" onclick="event.stopPropagation()"><img src="${escapeHTML(project.projectImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=360')}" alt="Project photo for ${escapeHTML(project.name)}"><span class="project-photo-hint">Hold to change</span></button>
               <div class="project-card-info">
                 <div class="project-card-heading"><div style="min-width:0"><div class="project-card-name">${escapeHTML(project.name)}</div><div class="project-card-location">${escapeHTML(project.location)}</div></div><span class="project-status ${statusTone}">${escapeHTML(statusLabel)}</span></div>
                 <div class="project-card-metrics">
@@ -5791,6 +5853,21 @@ body{display:flex!important;align-items:stretch!important;justify-content:stretc
   #screen-projects .project-stat strong{font-size:19px!important}
   #screen-projects .project-stat span{font-size:8px!important}
   #screen-projects .project-card-image{width:80px!important;flex-basis:80px!important}
+}
+
+/* v11.83: larger brand lockup and long-press project cover-photo control */
+#screen-projects>.pv-projects-brandbar{flex:0 0 116px!important;height:116px!important;min-height:116px!important;max-height:116px!important;padding:9px 16px!important;align-items:center!important}
+#screen-projects .pv-brand-lockup{gap:2px!important}
+#screen-projects .pv-header-logo{width:min(92vw,360px)!important;height:auto!important;max-width:92vw!important;max-height:82px!important;object-fit:contain!important;object-position:left center!important}
+#screen-projects .pv-brand-tagline{font-size:10px!important;line-height:1.15!important;letter-spacing:2px!important;padding-left:3px!important}
+#screen-projects .project-card-image.project-photo-change{position:relative!important;display:block!important;flex:0 0 88px!important;width:88px!important;height:120px!important;padding:0!important;margin:0!important;border:1px solid rgba(255,255,255,.96)!important;background:rgba(221,235,246,.7)!important;cursor:pointer!important;touch-action:pan-y!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important}
+#screen-projects .project-card-image.project-photo-change img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;pointer-events:none!important}
+#screen-projects .project-photo-hint{position:absolute!important;left:4px!important;right:4px!important;bottom:4px!important;z-index:3!important;padding:4px 2px!important;border-radius:7px!important;color:#fff!important;background:rgba(10,43,65,.68)!important;font-size:8px!important;line-height:1.1!important;font-weight:800!important;text-align:center!important;pointer-events:none!important}
+@media(max-width:390px){
+#screen-projects>.pv-projects-brandbar{flex-basis:110px!important;height:110px!important;min-height:110px!important;max-height:110px!important;padding:7px 12px!important}
+#screen-projects .pv-header-logo{width:92vw!important;max-width:92vw!important;max-height:78px!important}
+#screen-projects .pv-brand-tagline{font-size:9px!important;letter-spacing:1.7px!important}
+#screen-projects .project-card-image.project-photo-change{flex-basis:80px!important;width:80px!important;height:120px!important}
 }
 
 </style>
