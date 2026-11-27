@@ -1401,6 +1401,30 @@
   #screen-projects .project-card-image.project-photo-change{height:108px!important}
 }
 
+
+/* v11.86: final Projects logo override — placed last to beat legacy rules */
+#screen-projects.active>.topnav.pv-projects-brandbar{
+  flex:0 0 116px!important;height:116px!important;min-height:116px!important;max-height:116px!important;
+  justify-content:center!important;align-items:center!important;padding:9px 8px!important;
+}
+#screen-projects.active .pv-brand-lockup{
+  width:100%!important;max-width:100%!important;align-items:center!important;justify-content:center!important;
+  transform:translateY(7px)!important;gap:2px!important;
+}
+#screen-projects.active .pv-header-logo{
+  display:block!important;width:min(96vw,376px)!important;height:auto!important;
+  max-width:96vw!important;max-height:94px!important;object-fit:contain!important;object-position:center center!important;
+}
+#screen-projects.active .pv-brand-tagline{
+  text-align:center!important;padding-left:0!important;margin:0!important;
+}
+@media(max-width:390px){
+  #screen-projects.active>.topnav.pv-projects-brandbar{
+    flex-basis:112px!important;height:112px!important;min-height:112px!important;max-height:112px!important;
+  }
+  #screen-projects.active .pv-header-logo{width:96vw!important;max-width:96vw!important;max-height:90px!important}
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.85">
