@@ -1474,6 +1474,19 @@
   #screen-projects .project-card-image.project-photo-change{height:102px!important}
 }
 
+
+/* v11.88: give the brand mark a wider, more confident header proportion */
+#screen-projects.active .pv-header-logo{
+  width:min(94vw,390px)!important;max-width:94vw!important;
+  height:76px!important;max-height:none!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+@media(max-width:390px){
+  #screen-projects.active .pv-header-logo{
+    width:94vw!important;max-width:94vw!important;height:72px!important;
+  }
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.85">
