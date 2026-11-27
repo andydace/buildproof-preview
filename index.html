@@ -1513,6 +1513,50 @@
   }
 }
 
+
+
+/* v11.91: soften the Projects logo treatment and restore clear strapline space */
+#screen-projects.active>.pv-projects-brandbar{
+  flex:0 0 94px!important;height:94px!important;min-height:94px!important;max-height:94px!important;
+  padding:8px 14px 9px!important;justify-content:center!important;overflow:visible!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(235,245,251,.60))!important;
+  border-bottom:1px solid rgba(255,255,255,.78)!important;
+  box-shadow:0 5px 16px rgba(34,76,110,.07),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+#screen-projects.active .pv-brand-lockup{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:5px!important;width:auto!important;
+  transform:none!important;
+}
+#screen-projects.active .pv-header-logo{
+  display:block!important;width:176px!important;max-width:70vw!important;
+  height:auto!important;max-height:48px!important;object-fit:contain!important;
+  object-position:center!important;border-radius:15px!important;
+  clip-path:inset(0 round 15px)!important;
+  filter:drop-shadow(0 2px 5px rgba(26,62,88,.13))!important;
+}
+#screen-projects.active .pv-brand-tagline{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;z-index:2!important;margin:0!important;
+  padding:0 3px!important;text-align:center!important;
+  font-size:9px!important;line-height:1.25!important;
+  font-weight:800!important;letter-spacing:1.8px!important;
+  color:#56758c!important;white-space:nowrap!important;
+}
+#screen-projects.active .pv-brand-tagline span{color:#2592bd!important;padding:0 2px!important}
+@media(max-width:390px){
+  #screen-projects.active>.pv-projects-brandbar{
+    flex-basis:90px!important;height:90px!important;min-height:90px!important;max-height:90px!important;
+    padding:7px 12px 8px!important;
+  }
+  #screen-projects.active .pv-header-logo{
+    width:164px!important;max-width:72vw!important;max-height:43px!important;
+  }
+  #screen-projects.active .pv-brand-tagline{
+    font-size:8px!important;letter-spacing:1.45px!important;
+  }
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.85">
