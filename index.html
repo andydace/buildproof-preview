@@ -2023,6 +2023,35 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .evidence-rejection-note { padding:10px 12px; background:#fff1f1; border:1px solid #f0caca; border-radius:9px; color:#9f2020; font-size:13px; }
 </style>
 
+
+<style id="plotvault-glossy-brand-v11-93">
+/* v11.93 — shared glossy wordmark on Projects and Sign-in only */
+#screen-projects.active>.pv-projects-brandbar{
+  flex:0 0 132px!important;height:132px!important;min-height:132px!important;max-height:132px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:8px 12px 10px!important;background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(230,241,250,.74))!important;
+  border:0!important;box-shadow:0 9px 22px rgba(31,76,112,.08)!important;
+}
+#screen-projects.active .pv-brand-lockup{
+  width:100%!important;max-width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  transform:none!important;gap:0!important;
+}
+#screen-projects.active .pv-brand-art{display:block!important;width:min(94vw,430px)!important;max-width:100%!important;height:auto!important;max-height:112px!important;object-fit:contain!important}
+#screen-projects.active .pv-header-accent{display:none!important}
+#screen-login .pv-login-brand{
+  width:100%!important;max-width:390px!important;margin:0 auto 18px!important;padding:0!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;
+  display:flex!important;justify-content:center!important;align-items:center!important;
+}
+#screen-login .pv-brand-art{display:block!important;width:min(86vw,350px)!important;max-width:100%!important;height:auto!important;max-height:112px!important;object-fit:contain!important}
+#screen-login .screen-body{padding-top:34px!important}
+@media(max-width:390px){
+ #screen-projects.active>.pv-projects-brandbar{flex-basis:118px!important;height:118px!important;min-height:118px!important;max-height:118px!important;padding:7px 10px!important}
+ #screen-projects.active .pv-brand-art{width:96vw!important;max-height:102px!important}
+ #screen-login .pv-brand-art{width:88vw!important;max-height:100px!important}
+ #screen-login .screen-body{padding-top:26px!important}
+}
+</style>
 </head>
 
 <body>
@@ -2045,11 +2074,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       <div class="screen" id="screen-login">
         <div class="screen-body" style="padding-top:60px;">
           <div style="text-align:center;margin-bottom:30px;">
-            <div class="logo-mark" id="plotvault-logo">
-              <img src="https://raw.githubusercontent.com/andydace/buildproof/main/plotvault-logo.png" class="pv-logo" alt="PlotVault Logo" />
-            </div>
-            <div style="color:var(--muted);font-size:14px;margin-top:6px;">
-              Capture • Verify • Comply
+            <div class="pv-login-brand" id="plotvault-logo">
+              <img class="pv-brand-art" src="plotvault-brand.svg" alt="PlotVault — Capture, verify, comply">
             </div>
 
             <div style="margin-top:18px;font-size:24px;font-weight:700;color:var(--navy);">
@@ -2341,8 +2367,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
       <div class="screen" id="screen-projects">
         <div class="topnav pv-projects-brandbar">
           <div class="pv-brand-lockup">
-            <div class="pv-header-logo-text" role="img" aria-label="PlotVault"><span class="pv-logo-plot">Plot</span><span class="pv-logo-vault">Vault</span></div>
-            <div class="pv-brand-tagline">CAPTURE <span>•</span> VERIFY <span>•</span> COMPLY</div>
+            <img class="pv-brand-art" src="plotvault-brand.svg" alt="PlotVault — Capture, verify, comply">
           </div>
           <div class="pv-header-accent" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
