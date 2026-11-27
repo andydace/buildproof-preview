@@ -1371,6 +1371,36 @@
     #screen-reports .card,#screen-settings .card{margin-bottom:12px}
     @media print{#bottomnav,#fabbtn,.topnav{display:none!important}}
 
+
+
+/* v11.85: centre and slightly enlarge the Projects branding; compact project cards */
+#screen-projects>.pv-projects-brandbar{
+  justify-content:center!important;
+}
+#screen-projects .pv-brand-lockup{
+  width:100%!important;max-width:100%!important;
+  align-items:center!important;justify-content:center!important;
+  transform:translateY(5px)!important;
+}
+#screen-projects .pv-header-logo{
+  width:min(96vw,376px)!important;max-width:96vw!important;max-height:86px!important;
+  object-position:center center!important;
+}
+#screen-projects .pv-brand-tagline{
+  text-align:center!important;padding-left:0!important;
+}
+#screen-projects .project-card{min-height:130px!important}
+#screen-projects .project-card-main{min-height:108px!important}
+#screen-projects .project-card-image,
+#screen-projects .project-card-image.project-photo-change{
+  height:108px!important;
+}
+@media(max-width:390px){
+  #screen-projects .pv-header-logo{width:96vw!important;max-width:96vw!important;max-height:84px!important}
+  #screen-projects .project-card-image,
+  #screen-projects .project-card-image.project-photo-change{height:108px!important}
+}
+
 </style>
   <!-- PlotVault v11.23 - Plot Overview Redesign -->
 <meta name="plotvault-version" content="v11.65">
